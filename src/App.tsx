@@ -58,8 +58,10 @@ function PlayingScreen() {
     state,
     settings,
     phase,
+    sessionOutcome,
     dispatchPlayerAction,
     startNewHand,
+    restartSession,
     markTutorialDone,
   } = useGame()
 
@@ -93,7 +95,12 @@ function PlayingScreen() {
       {!showdown && (
         <ActionBar state={state} onAction={dispatchPlayerAction} />
       )}
-      <ShowdownModal state={state} onNextHand={startNewHand} />
+      <ShowdownModal
+        state={state}
+        onNextHand={startNewHand}
+        sessionOutcome={sessionOutcome}
+        onRestart={restartSession}
+      />
       <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       {tutorialOpen && (
         <Tutorial

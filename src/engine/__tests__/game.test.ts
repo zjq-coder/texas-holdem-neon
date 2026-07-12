@@ -5,6 +5,7 @@ import {
   applyAction,
   getLegalActions,
   getRaiseBounds,
+  getSessionOutcome,
   isHeroTurn,
   DEFAULT_BB,
   DEFAULT_SB,
@@ -400,6 +401,99 @@ describe('game', () => {
     // (seat3 has 200, needs 50 more — that is match, not reopen)
     const seat3NeedsMatch = s.seats[3]!.betThisStreet < s.currentBet
     expect(seat3NeedsMatch).toBe(true)
+  })
+
+  describe('getSessionOutcome (§5.5)', () => {
+    it('returns null mid-hand even if someone has 0 stack', () => {
+      let s = startHand(createInitialTable(), () => 0.5)
+      s = {
+        ...s,
+        seats: s.seats.map((seat, i) =>
+          i === 3 ? { ...seat, stack: 0, allIn: true } : seat,
+        ),
+      }
+      expect(s.street).toBe('preflop')
+      expect(getSessionOutcome(s)).toBeNull()
+    })
+
+    it('returns loss when hero stack is 0 at handOver', () => {
+      let s = createInitialTable()
+      s = {
+        ...s,
+        street: 'handOver',
+        seats: s.seats.map((seat) =>
+          seat.isHero
+            ? { ...seat, stack: 0 }
+            : { ...seat, stack: DEFAULT_STACK },
+        ),
+        winners: [{ seatId: 'seat-1', amount: 100 }],
+      }
+      expect(getSessionOutcome(s)).toBe('loss')
+    })
+
+    it('returns victory when only hero has chips at handOver', () => {
+      let s = createInitialTable()
+      s = {
+        ...s,
+        street: 'handOver',
+        seats: s.seats.map((seat) =>
+          seat.isHero
+            ? { ...seat, stack: DEFAULT_STACK }
+            : { ...seat, stack: 0 },
+        ),
+        winners: [{ seatId: 'seat-0', amount: 500 }],
+      }
+      expect(getSessionOutcome(s)).toBe('victory')
+    })
+
+    it('returns null when hero and at least one other have chips', () => {
+      let s = createInitialTable()
+      s = {
+        ...s,
+        street: 'handOver',
+        seats: s.seats.map((seat, i) =>
+          i === 0 || i === 1
+            ? { ...seat, stack: DEFAULT_STACK }
+            : { ...seat, stack: 0 },
+        ),
+        winners: [],
+      }
+      expect(getSessionOutcome(s)).toBeNull()
+    })
+
+    it('startHand fails with <2 players and outcome is decisive', () => {
+      let s = createInitialTable()
+      s = {
+        ...s,
+        street: 'handOver',
+        seats: s.seats.map((seat) =>
+          seat.isHero
+            ? { ...seat, stack: 0 }
+            : { ...seat, stack: DEFAULT_STACK },
+        ),
+        winners: [{ seatId: 'seat-2', amount: 200 }],
+      }
+      expect(getSessionOutcome(s)).toBe('loss')
+      // Even if we try startHand, still handOver and loss
+      const next = startHand(s, () => 0.1)
+      // Hero out: AI-only may still start if ≥2 AIs have chips — session layer blocks that
+      // When only one AI has chips:
+      s = {
+        ...s,
+        seats: s.seats.map((seat, i) =>
+          i === 1
+            ? { ...seat, stack: DEFAULT_STACK }
+            : { ...seat, stack: 0 },
+        ),
+      }
+      const failed = startHand(s, () => 0.1)
+      expect(failed.street).toBe('handOver')
+      expect(failed.lastActionLog.some((l) => l.includes('无法开局'))).toBe(
+        true,
+      )
+      expect(getSessionOutcome(failed)).toBe('loss')
+      void next
+    })
   })
 })
 

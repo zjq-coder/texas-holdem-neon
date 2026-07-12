@@ -14,8 +14,10 @@ import {
   applyAction,
   createInitialTable,
   getLegalActions,
+  getSessionOutcome,
   isHeroTurn,
   startHand,
+  type SessionOutcome,
 } from '../engine/game'
 import type { GameState, PlayerAction } from '../engine/types'
 import {
@@ -65,8 +67,12 @@ export interface GameContextValue {
   state: GameState
   settings: Settings
   phase: GamePhase
+  /** Set when hero busts or is sole survivor (design §5.5). */
+  sessionOutcome: SessionOutcome
   dispatchPlayerAction: (action: PlayerAction) => void
   startNewHand: () => void
+  /** Full table reset after victory / loss. */
+  restartSession: () => void
   startGame: (fromTutorial?: boolean) => void
   openTutorial: () => void
   updateSettings: (partial: Partial<Settings>) => void
@@ -81,6 +87,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     createInitialTable(loadSettings().playerName),
   )
   const [phase, setPhase] = useState<GamePhase>('start')
+  const [sessionOutcome, setSessionOutcome] = useState<SessionOutcome>(null)
   /** Index into lastActionLog already consumed for SFX. */
   const sfxLogCursor = useRef(0)
 
@@ -106,6 +113,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setPhase('tutorial')
         return
       }
+      setSessionOutcome(null)
       setState(startHand(createInitialTable(settings.playerName)))
       setPhase('playing')
     },
@@ -117,9 +125,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const startNewHand = useCallback(() => {
-    setState((s) => startHand(s))
-    setPhase('playing')
+    setState((s) => {
+      // Block AI-only / short tables after hero bust or sole survivor (§5.5)
+      if (getSessionOutcome(s)) return s
+      return startHand(s)
+    })
   }, [])
+
+  /** Full reset: new table + first hand after victory / loss. */
+  const restartSession = useCallback(() => {
+    setSessionOutcome(null)
+    setState(startHand(createInitialTable(settings.playerName)))
+    setPhase('playing')
+  }, [settings.playerName])
 
   const dispatchPlayerAction = useCallback((action: PlayerAction) => {
     setState((s) => {
@@ -128,15 +146,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  // Enter showdown UI phase when the hand settles.
+  // Phase + session end: handOver → showdown UI; detect hero bust / sole survivor.
+  // Successful startNewHand leaves showdown → playing when street advances.
   useEffect(() => {
-    if (
-      phase === 'playing' &&
-      (state.street === 'showdown' || state.street === 'handOver')
-    ) {
-      setPhase('showdown')
+    if (phase === 'start' || phase === 'tutorial') return
+    if (state.street === 'showdown' || state.street === 'handOver') {
+      if (phase !== 'showdown') setPhase('showdown')
+      const outcome = getSessionOutcome(state)
+      if (outcome) setSessionOutcome(outcome)
+      return
     }
-  }, [phase, state.street])
+    // Live street after next hand
+    if (phase === 'showdown') setPhase('playing')
+  }, [phase, state.street, state.handNumber, state.seats])
 
   // SFX: react to new engine action-log lines (player + AI + street deals).
   useEffect(() => {
@@ -156,8 +178,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [state.lastActionLog, phase])
 
   // AI auto-act loop: think delay then decideAction + applyAction.
+  // Never run when session has ended (hero bust / sole survivor).
   useEffect(() => {
     if (phase !== 'playing') return
+    if (sessionOutcome) return
     if (state.street === 'handOver' || state.street === 'showdown') return
 
     const idx = state.actionSeatIndex
@@ -170,6 +194,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
     const timer = window.setTimeout(() => {
       setState((s) => {
+        if (getSessionOutcome(s)) return s
         if (s.street === 'handOver' || s.street === 'showdown') return s
         if (s.actionSeatIndex === null) return s
         const actor = s.seats[s.actionSeatIndex]
@@ -183,6 +208,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(timer)
   }, [
     phase,
+    sessionOutcome,
     state.actionSeatIndex,
     state.street,
     state.handNumber,
@@ -197,8 +223,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       state,
       settings,
       phase,
+      sessionOutcome,
       dispatchPlayerAction,
       startNewHand,
+      restartSession,
       startGame,
       openTutorial,
       updateSettings,
@@ -208,8 +236,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       state,
       settings,
       phase,
+      sessionOutcome,
       dispatchPlayerAction,
       startNewHand,
+      restartSession,
       startGame,
       openTutorial,
       updateSettings,

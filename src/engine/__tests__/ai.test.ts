@@ -172,4 +172,12 @@ describe('ai', () => {
     const action = decideAction(masked, 'standard', () => 0.5)
     assertLegalAction(masked, action)
   })
+
+  it('decideAction returns check (not fold) when legal menu is empty', () => {
+    // handOver → getLegalActions is empty
+    const s = createInitialTable()
+    expect(getLegalActions(s)).toEqual([])
+    const action = decideAction(s, 'standard', () => 0.5)
+    expect(action.type).toBe('check')
+  })
 })

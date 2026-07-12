@@ -1,4 +1,4 @@
-import type { Seat } from '../engine/types'
+import type { Card, Seat } from '../engine/types'
 import styles from '../styles/table.module.css'
 import { CardView } from './Card'
 import { ChipStack } from './ChipStack'
@@ -10,6 +10,12 @@ export interface SeatViewProps {
   isDealer?: boolean
   isSB?: boolean
   isBB?: boolean
+  /** When set (showdown), highlight hole cards that appear in winners' best five. */
+  bestFiveKeys?: Set<string> | null
+}
+
+function cardKey(c: Card): string {
+  return `${c.rank}${c.suit}`
 }
 
 export function SeatView({
@@ -19,6 +25,7 @@ export function SeatView({
   isDealer = false,
   isSB = false,
   isBB = false,
+  bestFiveKeys = null,
 }: SeatViewProps) {
   const hole = seat.holeCards
   const showFace =
@@ -67,16 +74,23 @@ export function SeatView({
         className={`${styles.hole} ${seat.isHero ? styles.holeHero : ''}`.trim()}
       >
         {showFace &&
-          hole!.map((c, i) => (
-            <CardView
-              key={`${seat.id}-h-${c.rank}${c.suit}-${i}`}
-              card={c}
-              highlight={seat.isHero}
-              size={seat.isHero ? 'lg' : 'sm'}
-              enter="deal"
-              delayMs={i * 60}
-            />
-          ))}
+          hole!.map((c, i) => {
+            const inBest =
+              bestFiveKeys !== null && bestFiveKeys.has(cardKey(c))
+            // Live: soft hero highlight; showdown: only best-five cards
+            const highlight =
+              bestFiveKeys !== null ? inBest : seat.isHero
+            return (
+              <CardView
+                key={`${seat.id}-h-${c.rank}${c.suit}-${i}`}
+                card={c}
+                highlight={highlight}
+                size={seat.isHero ? 'lg' : 'sm'}
+                enter="deal"
+                delayMs={i * 60}
+              />
+            )
+          })}
         {showBack &&
           [0, 1].map((i) => (
             <CardView

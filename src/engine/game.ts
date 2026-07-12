@@ -14,6 +14,23 @@ export const DEFAULT_STACK = 10_000
 export const DEFAULT_SB = 50
 export const DEFAULT_BB = 100
 
+/** End-of-session result after a hand settles (design §5.5). */
+export type SessionOutcome = 'victory' | 'loss' | null
+
+/**
+ * Hero busted → loss; fewer than 2 seats with chips and hero alive → victory.
+ * Only meaningful on handOver / showdown (all-in seats can have 0 mid-hand).
+ */
+export function getSessionOutcome(state: GameState): SessionOutcome {
+  if (state.street !== 'handOver' && state.street !== 'showdown') return null
+  const hero = state.seats.find((s) => s.isHero)
+  if (!hero) return null
+  if (hero.stack <= 0) return 'loss'
+  const withChips = state.seats.filter((s) => s.stack > 0)
+  if (withChips.length < 2) return 'victory'
+  return null
+}
+
 const AI_NAMES = ['VEX', 'NOVA', 'GHOST', 'PULSE', 'HEX'] as const
 const SEAT_COUNT = 6
 
@@ -369,7 +386,7 @@ function isActionLegal(state: GameState, action: PlayerAction): boolean {
   if (action.type === 'allIn') return legal.some((a) => a.type === 'allIn')
   if (action.type === 'raise') {
     if (!legal.some((a) => a.type === 'raise' || a.type === 'allIn')) {
-      // raise only if full raise listed; short all-in must use allIn
+      return false
     }
     const bounds = getRaiseBounds(state)
     if (!bounds || action.amount === undefined) return false

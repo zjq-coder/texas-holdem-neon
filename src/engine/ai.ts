@@ -193,7 +193,8 @@ export function decideAction(
 ): PlayerAction {
   const legal = getLegalActions(state)
   if (legal.length === 0) {
-    return { type: 'fold' }
+    // Defensive: prefer passive check over bare fold when menu is empty
+    return { type: 'check' }
   }
 
   const idx = state.actionSeatIndex

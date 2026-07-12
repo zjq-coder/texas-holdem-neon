@@ -510,6 +510,24 @@
   text-shadow: var(--glow-gold);
 }
 
+.showdown-modal--victory .showdown-modal-title {
+  color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+.showdown-modal--loss .showdown-modal-title {
+  color: var(--magenta);
+  text-shadow: var(--glow-magenta);
+}
+
+.showdown-modal-subtitle {
+  margin: -0.35rem 0 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--smoke);
+  letter-spacing: 0.04em;
+}
+
 .showdown-modal-list {
   list-style: none;
   margin: 0 0 0.5rem;
@@ -522,13 +540,22 @@
 .showdown-modal-line {
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto auto auto;
   gap: 0.15rem 0.75rem;
   text-align: left;
   padding: 0.55rem 0.7rem;
   border-radius: 12px;
   background: rgba(245, 197, 66, 0.06);
   border: 1px solid rgba(245, 197, 66, 0.18);
+}
+
+.showdown-modal-best-five {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+  margin-top: 0.35rem;
+  justify-content: flex-start;
 }
 
 .showdown-modal-name {

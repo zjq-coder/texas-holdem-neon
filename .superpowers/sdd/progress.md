@@ -13,3 +13,5 @@ Task 8: complete (commits adf71b7..188b6e6, review clean)
 Task 9: complete (commits 188b6e6..90a4080, UI table shipped)
 Task 10: complete (commits 90a4080..89c6d46, neon polish)
 Task 11: complete (commits 89c6d46..0b67a3a)
+Task 12: complete (commits 0b67a3a..159f8f1)
+All tasks complete. Final review next.

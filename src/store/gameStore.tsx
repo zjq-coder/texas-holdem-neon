@@ -39,6 +39,7 @@ export interface GameContextValue {
   dispatchPlayerAction: (action: PlayerAction) => void
   startNewHand: () => void
   startGame: (fromTutorial?: boolean) => void
+  openTutorial: () => void
   updateSettings: (partial: Partial<Settings>) => void
   markTutorialDone: () => void
 }
@@ -79,6 +80,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     },
     [settings.tutorialDone, settings.playerName],
   )
+
+  const openTutorial = useCallback(() => {
+    setPhase('tutorial')
+  }, [])
 
   const startNewHand = useCallback(() => {
     setState((s) => startHand(s))
@@ -147,6 +152,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       dispatchPlayerAction,
       startNewHand,
       startGame,
+      openTutorial,
       updateSettings,
       markTutorialDone,
     }),
@@ -157,6 +163,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       dispatchPlayerAction,
       startNewHand,
       startGame,
+      openTutorial,
       updateSettings,
       markTutorialDone,
     ],

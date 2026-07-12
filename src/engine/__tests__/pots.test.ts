@@ -7,7 +7,13 @@ describe('computePots', () => {
       { id: 'a', totalBetThisHand: 100, folded: false },
       { id: 'b', totalBetThisHand: 100, folded: false },
     ])
-    expect(pots).toEqual([{ amount: 200, eligibleSeatIds: ['a', 'b'] }])
+    expect(pots).toEqual([
+      {
+        amount: 200,
+        eligibleSeatIds: ['a', 'b'],
+        contributorSeatIds: ['a', 'b'],
+      },
+    ])
   })
 
   it('side pot when one all-in short', () => {
@@ -18,8 +24,16 @@ describe('computePots', () => {
       { id: 'c', totalBetThisHand: 100, folded: false },
     ])
     expect(pots).toHaveLength(2)
-    expect(pots[0]).toEqual({ amount: 150, eligibleSeatIds: ['a', 'b', 'c'] })
-    expect(pots[1]).toEqual({ amount: 100, eligibleSeatIds: ['b', 'c'] })
+    expect(pots[0]).toEqual({
+      amount: 150,
+      eligibleSeatIds: ['a', 'b', 'c'],
+      contributorSeatIds: ['a', 'b', 'c'],
+    })
+    expect(pots[1]).toEqual({
+      amount: 100,
+      eligibleSeatIds: ['b', 'c'],
+      contributorSeatIds: ['b', 'c'],
+    })
   })
 
   it('folded player chips in pot but not eligible', () => {
@@ -30,6 +44,7 @@ describe('computePots', () => {
     ])
     expect(pots[0].amount).toBe(300)
     expect(pots[0].eligibleSeatIds).toEqual(['b', 'c'])
+    expect(pots[0].contributorSeatIds).toEqual(['a', 'b', 'c'])
   })
 
   it('three-tier side pots for staggered all-ins 30/50/100', () => {
@@ -43,14 +58,46 @@ describe('computePots', () => {
 
     expect(pots).toHaveLength(3)
     // main: 30 × 3
-    expect(pots[0]).toEqual({ amount: 90, eligibleSeatIds: ['a', 'b', 'c'] })
+    expect(pots[0]).toEqual({
+      amount: 90,
+      eligibleSeatIds: ['a', 'b', 'c'],
+      contributorSeatIds: ['a', 'b', 'c'],
+    })
     // side1: (50-30) × 2
-    expect(pots[1]).toEqual({ amount: 40, eligibleSeatIds: ['b', 'c'] })
+    expect(pots[1]).toEqual({
+      amount: 40,
+      eligibleSeatIds: ['b', 'c'],
+      contributorSeatIds: ['b', 'c'],
+    })
     // side2: (100-50) × 1
-    expect(pots[2]).toEqual({ amount: 50, eligibleSeatIds: ['c'] })
+    expect(pots[2]).toEqual({
+      amount: 50,
+      eligibleSeatIds: ['c'],
+      contributorSeatIds: ['c'],
+    })
 
     const totalContributed = seats.reduce((s, p) => s + p.totalBetThisHand, 0)
     const totalPots = pots.reduce((s, p) => s + p.amount, 0)
     expect(totalPots).toBe(totalContributed)
+  })
+
+  it('empty-eligible side pot when only folded players overbet a level', () => {
+    // short contender 50; two fold after putting 100 each → side layer has no eligible
+    const pots = computePots([
+      { id: 'a', totalBetThisHand: 50, folded: false },
+      { id: 'b', totalBetThisHand: 100, folded: true },
+      { id: 'c', totalBetThisHand: 100, folded: true },
+    ])
+    expect(pots).toHaveLength(2)
+    expect(pots[0]).toEqual({
+      amount: 150,
+      eligibleSeatIds: ['a'],
+      contributorSeatIds: ['a', 'b', 'c'],
+    })
+    expect(pots[1]).toEqual({
+      amount: 100,
+      eligibleSeatIds: [],
+      contributorSeatIds: ['b', 'c'],
+    })
   })
 })

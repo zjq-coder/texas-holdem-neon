@@ -185,13 +185,13 @@ describe('game', () => {
       s = applyAction(s, fold!)
     }
     expect(s.street).toBe('handOver')
-    const winner = s.winners![0]!
-    expect(winner.seatId).toBe(s.seats[raiser]!.id)
-    // SB 50 + BB 100 + raise 200 from raiser who already... wait raise to 200 means
-    // raiser put 200 total; SB+BB still in. Winner gets pot.
-    expect(winner.amount).toBeGreaterThan(0)
+    const winner = s.winners!.find((w) => w.seatId === s.seats[raiser]!.id)!
+    expect(winner).toBeDefined()
+    // Raise to 200; everyone folds. Uncalled excess 100 returns (200-BB),
+    // then pot = SB50+BB100+called100 = 250 → stack = 10000 - 200 + 100 + 250
     const winnerSeat = s.seats.find((x) => x.id === winner.seatId)!
-    expect(winnerSeat.stack).toBe(DEFAULT_STACK - 200 + winner.amount)
+    expect(winnerSeat.stack).toBe(DEFAULT_STACK + DEFAULT_SB + DEFAULT_BB)
+    expect(winner.amount).toBe(DEFAULT_SB + DEFAULT_BB + DEFAULT_BB)
   })
 
   it('full call-check runout reaches handOver with board of 5', () => {
@@ -282,6 +282,131 @@ describe('game', () => {
     expect(s.dealerIndex).toBe(1)
     expect(s.handNumber).toBe(2)
   })
+
+  it('short all-in + side pot + free folds: per-seat stacks correct', () => {
+    // seat3 short 150 all-in; seat4/5 build 400 side; then both fold on flop.
+    // Main layers → seat3; empty-eligible side → refund to seat4 & seat5.
+    let s = createInitialTable()
+    s = {
+      ...s,
+      seats: s.seats.map((seat, i) =>
+        i === 3 ? { ...seat, stack: 150 } : { ...seat },
+      ),
+    }
+    const startStacks = s.seats.map((seat) => seat.stack)
+    s = startHand(s, () => 0.55)
+    expect(s.actionSeatIndex).toBe(3)
+    s = applyAction(s, { type: 'allIn' }) // 150
+    expect(s.seats[3]!.allIn).toBe(true)
+
+    // seat4 raises to 400 (full reopen)
+    expect(s.actionSeatIndex).toBe(4)
+    s = applyAction(s, { type: 'raise', amount: 400 })
+    // seat5 calls 400
+    expect(s.actionSeatIndex).toBe(5)
+    s = applyAction(s, { type: 'call' })
+    // hero, SB, BB fold
+    for (let i = 0; i < 3; i++) {
+      const legal = getLegalActions(s)
+      const fold = legal.find((a) => a.type === 'fold')
+      s = applyAction(s, fold!)
+    }
+    expect(s.street).toBe('flop')
+    // contenders: 3 (all-in), 4, 5 — first actor seat4
+    expect(contendersOf(s)).toEqual([3, 4, 5])
+    expect(s.actionSeatIndex).toBe(4)
+    s = applyAction(s, { type: 'fold' })
+    expect(s.actionSeatIndex).toBe(5)
+    s = applyAction(s, { type: 'fold' })
+
+    expect(s.street).toBe('handOver')
+    // Contributions: SB50 + BB100 + 150 + 400 + 400 = 1100
+    // seat3 wins layers through 150: 250+200+150 = 600
+    // side (400-150)*2 = 500 refunded equally → 250 each to seat4/5
+    expect(s.seats[3]!.stack).toBe(600)
+    expect(s.seats[4]!.stack).toBe(startStacks[4]! - 400 + 250)
+    expect(s.seats[5]!.stack).toBe(startStacks[5]! - 400 + 250)
+    expect(s.seats[0]!.stack).toBe(startStacks[0]!)
+    expect(s.seats[1]!.stack).toBe(startStacks[1]! - DEFAULT_SB)
+    expect(s.seats[2]!.stack).toBe(startStacks[2]! - DEFAULT_BB)
+
+    const total = s.seats.reduce((sum, seat) => sum + seat.stack, 0)
+    expect(total).toBe(startStacks.reduce((a, b) => a + b, 0))
+    // Short all-in must NOT receive the empty-eligible side pot
+    expect(s.seats[3]!.stack).toBeLessThan(600 + 500)
+  })
+
+  it('empty-eligible pot is refunded (chip conservation, not dropped)', () => {
+    // Same structure as above — assert no chips vanish and side pot not eaten by short stack
+    let s = createInitialTable()
+    s = {
+      ...s,
+      seats: s.seats.map((seat, i) =>
+        i === 3 ? { ...seat, stack: 150 } : { ...seat },
+      ),
+    }
+    const startTotal = s.seats.reduce((sum, seat) => sum + seat.stack, 0)
+    s = startHand(s, () => 0.66)
+    s = applyAction(s, { type: 'allIn' })
+    s = applyAction(s, { type: 'raise', amount: 400 })
+    s = applyAction(s, { type: 'call' })
+    for (let i = 0; i < 3; i++) {
+      s = applyAction(s, { type: 'fold' })
+    }
+    // fold both side-pot players
+    s = applyAction(s, { type: 'fold' })
+    s = applyAction(s, { type: 'fold' })
+    expect(s.street).toBe('handOver')
+    const endTotal = s.seats.reduce((sum, seat) => sum + seat.stack, 0)
+    expect(endTotal).toBe(startTotal)
+    // seat4+seat5 recovered side; short stack only main-eligible amount
+    expect(s.seats[4]!.stack + s.seats[5]!.stack).toBe(
+      2 * DEFAULT_STACK - 800 + 500,
+    )
+    expect(s.seats[3]!.stack).toBe(600)
+  })
+
+  it('incomplete all-in does not reopen action (acted flags kept)', () => {
+    // seat5 stack 250 → all-in raises currentBet by only 50 (< minRaise 100)
+    let s = createInitialTable()
+    s = {
+      ...s,
+      seats: s.seats.map((seat, i) =>
+        i === 5 ? { ...seat, stack: 250 } : { ...seat },
+      ),
+    }
+    s = startHand(s, () => 0.77)
+    // UTG full raise to 200
+    expect(s.actionSeatIndex).toBe(3)
+    s = applyAction(s, { type: 'raise', amount: 200 })
+    expect(s.minRaise).toBe(100)
+    // seat4 calls 200
+    s = applyAction(s, { type: 'call' })
+    expect(s.seats[4]!.betThisStreet).toBe(200)
+    expect(s.actedThisStreet[4]).toBe(true)
+    // seat5 all-in 250 — incomplete raise (size 50 < minRaise 100)
+    expect(s.actionSeatIndex).toBe(5)
+    s = applyAction(s, { type: 'allIn' })
+    expect(s.seats[5]!.allIn).toBe(true)
+    expect(s.currentBet).toBe(250)
+    // Incomplete raise must NOT clear others' acted flags
+    expect(s.actedThisStreet[3]).toBe(true)
+    expect(s.actedThisStreet[4]).toBe(true)
+    // seat4 already acted but is behind currentBet → still needs to match chips
+    // Hero (0) has not acted yet and must respond
+    // Action should continue to next who needs action (hero seat 0), not re-open full orbit as if full raise
+    expect(s.actionSeatIndex).toBe(0)
+    // Players who matched 250 would not be re-prompted solely due to reopen
+    // (seat3 has 200, needs 50 more — that is match, not reopen)
+    const seat3NeedsMatch = s.seats[3]!.betThisStreet < s.currentBet
+    expect(seat3NeedsMatch).toBe(true)
+  })
 })
+
+function contendersOf(state: GameState): number[] {
+  return state.seats
+    .map((seat, i) => (!seat.sittingOut && !seat.folded ? i : -1))
+    .filter((i) => i >= 0)
+}
 
 const SEAT_COUNT_STACKS = 6 * DEFAULT_STACK

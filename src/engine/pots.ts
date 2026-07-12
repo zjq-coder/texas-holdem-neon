@@ -32,12 +32,13 @@ export function computePots(seats: SeatBet[]): Pot[] {
     }
 
     const amount = delta * contributors.length
+    const contributorSeatIds = contributors.map((s) => s.id)
     const eligibleSeatIds = contributors
       .filter((s) => !s.folded)
       .map((s) => s.id)
 
-    // 无人有资格赢取时仍保留池金额（仅弃牌者投入）— 金额仍需归池
-    pots.push({ amount, eligibleSeatIds })
+    // 无人有资格赢取时仍保留池金额（仅弃牌者投入）— 金额仍需归还贡献者
+    pots.push({ amount, eligibleSeatIds, contributorSeatIds })
     prev = level
   }
 

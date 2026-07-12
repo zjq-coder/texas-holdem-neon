@@ -33,7 +33,10 @@ export interface Seat {
 
 export interface Pot {
   amount: number
+  /** Non-folded seats that may win this pot. */
   eligibleSeatIds: string[]
+  /** All seats (incl. folded) that contributed chips to this pot layer. */
+  contributorSeatIds: string[]
 }
 
 export interface WinnerInfo {

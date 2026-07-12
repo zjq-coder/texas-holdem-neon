@@ -83,6 +83,7 @@ function cloneState(state: GameState): GameState {
     pots: state.pots.map((p) => ({
       amount: p.amount,
       eligibleSeatIds: [...p.eligibleSeatIds],
+      contributorSeatIds: [...p.contributorSeatIds],
     })),
     winners: state.winners
       ? state.winners.map((w) => ({
@@ -624,31 +625,163 @@ function runoutAndShowdown(state: GameState): GameState {
   return showdown(state)
 }
 
+/**
+ * Return uncalled excess above the second-highest totalBetThisHand
+ * to the unique highest contributor (standard fold-out rule).
+ */
+function returnUncalledExcess(state: GameState): number {
+  let maxBet = 0
+  let second = 0
+  for (const seat of state.seats) {
+    const b = seat.totalBetThisHand
+    if (b > maxBet) {
+      second = maxBet
+      maxBet = b
+    } else if (b > second && b < maxBet) {
+      second = b
+    }
+  }
+  if (maxBet <= second) return 0
+
+  const atMax = state.seats.filter((s) => s.totalBetThisHand === maxBet)
+  if (atMax.length !== 1) return 0
+
+  const excess = maxBet - second
+  if (excess <= 0) return 0
+
+  const seat = atMax[0]!
+  seat.stack += excess
+  seat.totalBetThisHand -= excess
+  seat.betThisStreet = Math.max(0, seat.betThisStreet - excess)
+  if (seat.stack > 0) seat.allIn = false
+  state.lastActionLog.push(`${seat.name} 退还未跟注 ${excess}`)
+  return excess
+}
+
+/**
+ * Refund a pot with zero eligible winners to its contributors.
+ * Each layer contributor put the same delta, so equal split; odd chips
+ * go in dealer-left order among contributors.
+ */
+function refundPotToContributors(
+  state: GameState,
+  pot: { amount: number; contributorSeatIds: string[] },
+  acc?: Map<string, WinnerInfo>,
+): void {
+  const ids = pot.contributorSeatIds.filter((id) =>
+    state.seats.some((s) => s.id === id),
+  )
+  if (ids.length === 0 || pot.amount <= 0) return
+
+  const share = Math.floor(pot.amount / ids.length)
+  let remainder = pot.amount - share * ids.length
+  const order = seatOrderFromDealerLeft(state)
+  const ordered = order.filter((id) => ids.includes(id))
+  // Include any contributor not found in order (should not happen)
+  for (const id of ids) {
+    if (!ordered.includes(id)) ordered.push(id)
+  }
+
+  for (const id of ordered) {
+    let gain = share
+    if (remainder > 0) {
+      gain += 1
+      remainder -= 1
+    }
+    if (gain <= 0) continue
+    const seat = state.seats.find((s) => s.id === id)
+    if (!seat) continue
+    seat.stack += gain
+    if (acc) {
+      const prev = acc.get(id)
+      if (prev) prev.amount += gain
+      else acc.set(id, { seatId: id, amount: gain })
+    }
+  }
+}
+
 function awardUncontested(state: GameState): GameState {
+  // 1) Return uncalled excess before building pots
+  returnUncalledExcess(state)
+  // 2) Refresh layered pots from remaining contributions
   refreshPots(state)
+
   const contenders = contenderIndices(state)
   const winnerIdx = contenders[0]
   if (winnerIdx === undefined) {
+    // No contender: refund every pot to contributors
+    const acc = new Map<string, WinnerInfo>()
+    for (const pot of state.pots) {
+      refundPotToContributors(state, pot, acc)
+    }
+    state.winners = [...acc.values()]
     state.street = 'handOver'
     state.actionSeatIndex = null
-    state.winners = []
+    for (const seat of state.seats) {
+      seat.betThisStreet = 0
+      seat.totalBetThisHand = 0
+    }
+    state.pots = []
     return state
   }
 
-  const winner = state.seats[winnerIdx]!
-  const total = state.pots.reduce((s, p) => s + p.amount, 0)
-  // Also include any chips still in totalBet if pots empty edge case
-  const potTotal =
-    total > 0
-      ? total
-      : state.seats.reduce((s, seat) => s + seat.totalBetThisHand, 0)
+  const winnersAcc = new Map<string, WinnerInfo>()
+  let awardedToWinner = 0
 
-  winner.stack += potTotal
-  state.winners = [{ seatId: winner.id, amount: potTotal }]
+  // 3) Award per pot by eligibility — never dump empty side pot to short all-in
+  for (const pot of state.pots) {
+    if (pot.amount <= 0) continue
+    if (pot.eligibleSeatIds.length === 1) {
+      const id = pot.eligibleSeatIds[0]!
+      const seat = state.seats.find((s) => s.id === id)
+      if (!seat) {
+        refundPotToContributors(state, pot, winnersAcc)
+        continue
+      }
+      seat.stack += pot.amount
+      const prev = winnersAcc.get(id)
+      if (prev) prev.amount += pot.amount
+      else winnersAcc.set(id, { seatId: id, amount: pot.amount })
+      if (id === state.seats[winnerIdx]!.id) awardedToWinner += pot.amount
+    } else if (pot.eligibleSeatIds.length === 0) {
+      refundPotToContributors(state, pot, winnersAcc)
+    } else {
+      // Multiple eligible but only one contender should remain — award to sole contender among eligible
+      const contenderId = state.seats[winnerIdx]!.id
+      if (pot.eligibleSeatIds.includes(contenderId)) {
+        const seat = state.seats[winnerIdx]!
+        seat.stack += pot.amount
+        const prev = winnersAcc.get(contenderId)
+        if (prev) prev.amount += pot.amount
+        else winnersAcc.set(contenderId, { seatId: contenderId, amount: pot.amount })
+        awardedToWinner += pot.amount
+      } else {
+        refundPotToContributors(state, pot, winnersAcc)
+      }
+    }
+  }
+
+  // Edge: pots empty but chips still in totalBet trackers
+  if (state.pots.length === 0) {
+    const potTotal = state.seats.reduce((s, seat) => s + seat.totalBetThisHand, 0)
+    if (potTotal > 0) {
+      const winner = state.seats[winnerIdx]!
+      winner.stack += potTotal
+      awardedToWinner += potTotal
+      const prev = winnersAcc.get(winner.id)
+      if (prev) prev.amount += potTotal
+      else winnersAcc.set(winner.id, { seatId: winner.id, amount: potTotal })
+    }
+  }
+
+  const winner = state.seats[winnerIdx]!
+  state.winners = [...winnersAcc.values()]
   state.street = 'handOver'
   state.actionSeatIndex = null
-  state.lastActionLog.push(`${winner.name} 无人争夺赢得 ${potTotal}`)
-  // Clear bet trackers into pots already awarded
+  state.lastActionLog.push(
+    `${winner.name} 无人争夺赢得 ${awardedToWinner}` +
+      (winnersAcc.size > 1 ? '（边池已按资格/贡献退还）' : ''),
+  )
   for (const seat of state.seats) {
     seat.betThisStreet = 0
     seat.totalBetThisHand = 0
@@ -660,6 +793,7 @@ function awardUncontested(state: GameState): GameState {
 function showdown(state: GameState): GameState {
   state.street = 'showdown'
   state.actionSeatIndex = null
+  returnUncalledExcess(state)
   refreshPots(state)
 
   const board = state.communityCards
@@ -678,7 +812,8 @@ function showdown(state: GameState): GameState {
   for (const pot of state.pots) {
     const eligible = pot.eligibleSeatIds.filter((id) => handCache.has(id))
     if (eligible.length === 0) {
-      // Only folded contributors — should not happen if uncontested handled; skip
+      // Empty-eligible (or no evaluable hand): refund to layer contributors — never drop chips
+      refundPotToContributors(state, pot, winnersAcc)
       continue
     }
     if (eligible.length === 1) {

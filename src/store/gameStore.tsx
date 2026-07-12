@@ -4,9 +4,11 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
+import { playChip, playDeal, playWin } from '../audio/sfx'
 import { decideAction } from '../engine/ai'
 import {
   applyAction,
@@ -21,6 +23,33 @@ import {
   saveSettings,
   type Settings,
 } from './settings'
+
+/** Map engine action-log lines to short SFX cues. */
+function playSfxForLogEntry(entry: string): void {
+  if (
+    entry.includes('手开始') ||
+    entry.includes('翻牌') ||
+    entry.includes('转牌') ||
+    entry.includes('河牌') ||
+    entry.includes('发完公共牌')
+  ) {
+    playDeal()
+    return
+  }
+  if (
+    entry.includes('跟注') ||
+    entry.includes('加注') ||
+    entry.includes('全下') ||
+    entry.includes('小盲') ||
+    entry.includes('大盲')
+  ) {
+    playChip()
+    return
+  }
+  if (entry.includes('赢得') || entry.includes('摊牌结束')) {
+    playWin()
+  }
+}
 
 export type GamePhase = 'start' | 'tutorial' | 'playing' | 'showdown'
 
@@ -52,6 +81,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
     createInitialTable(loadSettings().playerName),
   )
   const [phase, setPhase] = useState<GamePhase>('start')
+  /** Index into lastActionLog already consumed for SFX. */
+  const sfxLogCursor = useRef(0)
 
   const updateSettings = useCallback((partial: Partial<Settings>) => {
     setSettings((prev) => {
@@ -106,6 +137,23 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setPhase('showdown')
     }
   }, [phase, state.street])
+
+  // SFX: react to new engine action-log lines (player + AI + street deals).
+  useEffect(() => {
+    const log = state.lastActionLog
+    // startHand replaces the log array — reset cursor when it shrinks.
+    if (log.length < sfxLogCursor.current) {
+      sfxLogCursor.current = 0
+    }
+    if (log.length === sfxLogCursor.current) return
+    const fresh = log.slice(sfxLogCursor.current)
+    sfxLogCursor.current = log.length
+    // Skip SFX on start screen before any play session.
+    if (phase === 'start' || phase === 'tutorial') return
+    for (const entry of fresh) {
+      playSfxForLogEntry(entry)
+    }
+  }, [state.lastActionLog, phase])
 
   // AI auto-act loop: think delay then decideAction + applyAction.
   useEffect(() => {

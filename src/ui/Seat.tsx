@@ -69,10 +69,12 @@ export function SeatView({
         {showFace &&
           hole!.map((c, i) => (
             <CardView
-              key={`${seat.id}-h-${i}`}
+              key={`${seat.id}-h-${c.rank}${c.suit}-${i}`}
               card={c}
               highlight={seat.isHero}
               size={seat.isHero ? 'lg' : 'sm'}
+              enter="deal"
+              delayMs={i * 60}
             />
           ))}
         {showBack &&
@@ -82,6 +84,8 @@ export function SeatView({
               card={hole![i] ?? hole![0]!}
               faceDown
               size={seat.isHero ? 'lg' : 'sm'}
+              enter="deal"
+              delayMs={i * 60}
             />
           ))}
         {!showFace && !showBack && (

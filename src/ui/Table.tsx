@@ -55,12 +55,17 @@ export function Table({
           <div className={styles.board} aria-label="公共牌">
             {Array.from({ length: 5 }).map((_, i) => {
               const card = state.communityCards[i] ?? null
+              const cardKey = card
+                ? `board-${i}-${card.rank}${card.suit}`
+                : `board-${i}-empty`
               return (
                 <CardView
-                  key={`board-${i}`}
+                  key={cardKey}
                   card={card}
                   size="md"
                   highlight={card !== null}
+                  enter={card ? 'flip' : 'none'}
+                  delayMs={card ? i * 70 : 0}
                 />
               )
             })}

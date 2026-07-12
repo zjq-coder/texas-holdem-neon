@@ -14,5 +14,5 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --glow-magenta: 0 0 12px rgba(255, 43, 214, 0.65), 0 0 28px rgba(255, 43, 214, 0.35);
   --glow-cyan: 0 0 12px rgba(45, 226, 230, 0.65), 0 0 28px rgba(45, 226, 230, 0.35);
-  --glow-gold: 0 0 10px rgba(245, 197, 66, 0.55);
+  --glow-gold: 0 0 10px rgba(245, 197, 66, 0.55), 0 0 22px rgba(245, 197, 66, 0.3);
 }

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { Card } from '../engine/types'
 import styles from '../styles/card.module.css'
 
@@ -24,12 +25,18 @@ const SUIT_GLYPH: Record<Card['suit'], string> = {
   c: '♣',
 }
 
+export type CardEnterAnim = 'deal' | 'flip' | 'none'
+
 export interface CardViewProps {
   card: Card | null
   faceDown?: boolean
   highlight?: boolean
   className?: string
   size?: 'sm' | 'md' | 'lg'
+  /** Enter animation: deal-in (hole) or rotateY flip (community). Class-based for reduced-motion. */
+  enter?: CardEnterAnim
+  /** Stagger delay in ms for deal/flip sequences */
+  delayMs?: number
 }
 
 export function CardView({
@@ -38,17 +45,25 @@ export function CardView({
   highlight = false,
   className = '',
   size = 'md',
+  enter = 'none',
+  delayMs = 0,
 }: CardViewProps) {
   const sizeClass =
     size === 'sm' ? styles.sm : size === 'lg' ? styles.lg : ''
+  const enterClass =
+    enter === 'deal' ? styles.dealIn : enter === 'flip' ? styles.flipIn : ''
   const rootClass = [
     styles.card,
     sizeClass,
     highlight ? styles.highlight : '',
+    enterClass,
     className,
   ]
     .filter(Boolean)
     .join(' ')
+
+  const style: CSSProperties | undefined =
+    delayMs > 0 ? { animationDelay: `${delayMs}ms` } : undefined
 
   if (!card) {
     return (
@@ -64,6 +79,7 @@ export function CardView({
     return (
       <div
         className={rootClass}
+        style={style}
         aria-label="牌背"
         data-card="back"
       >
@@ -80,6 +96,7 @@ export function CardView({
   return (
     <div
       className={rootClass}
+      style={style}
       aria-label={`${rank}${suit}`}
       data-card={`${rank}${card.suit}`}
     >

@@ -87,9 +87,8 @@ function hasOpenEndedStraightDraw(hole: Card[], board: Card[]): boolean {
   const ranks = [...new Set([...hole, ...board].map((c) => c.rank))].sort(
     (a, b) => a - b,
   )
-  // Wheel: A-2-3-4 counts as OESD toward 5
-  const expanded =
-    ranks.includes(14) && !ranks.includes(1) ? [1, ...ranks] : ranks
+  // Wheel: A-2-3-4 counts as OESD toward 5 (1 is synthetic low-ace, not Rank)
+  const expanded: number[] = ranks.includes(14) ? [1, ...ranks] : [...ranks]
 
   for (let i = 0; i <= expanded.length - 4; i++) {
     const window = expanded.slice(i, i + 4)

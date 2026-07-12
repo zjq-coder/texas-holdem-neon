@@ -64,4 +64,9 @@ export interface GameState {
   lastActionLog: string[]
   /** 本手是否已发过手牌 */
   holeCardsDealt: boolean
+  /**
+   * 本街是否已自愿行动过（盲注不算）。
+   * 与 betThisStreet 配合：可行动玩家需 matched 且 acted 才算完成本街。
+   */
+  actedThisStreet: boolean[]
 }

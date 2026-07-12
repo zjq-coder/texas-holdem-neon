@@ -1,0 +1,18 @@
+:root {
+  --void: #07060b;
+  --felt: #0b1f1a;
+  --felt-edge: #050f0c;
+  --magenta: #ff2bd6;
+  --cyan: #2de2e6;
+  --gold: #f5c542;
+  --smoke: #a8a4b8;
+  --text: #f2f0f7;
+  --danger: #ff4d6d;
+  --radius-lg: 24px;
+  --font-display: "Orbitron", "Rajdhani", system-ui, sans-serif;
+  --font-body: "Noto Sans SC", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --glow-magenta: 0 0 12px rgba(255, 43, 214, 0.65), 0 0 28px rgba(255, 43, 214, 0.35);
+  --glow-cyan: 0 0 12px rgba(45, 226, 230, 0.65), 0 0 28px rgba(45, 226, 230, 0.35);
+  --glow-gold: 0 0 10px rgba(245, 197, 66, 0.55);
+}

@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import type { Card, GameState, PlayerAction } from '../engine/types'
 import styles from '../styles/bottomDock.module.css'
 import { CardView } from './Card'
@@ -16,7 +16,7 @@ function cardKey(c: Card): string {
 }
 
 /**
- * 底部手牌托盘：底牌居中大号扇形突出，操作栏在下方。
+ * 底部手牌托盘：超大底牌居中扇形 + 悬停/点击上浮动效。
  */
 export function BottomDock({
   state,
@@ -31,9 +31,11 @@ export function BottomDock({
   const showBack =
     hasCards && !showFace && !hero?.folded && !hero?.sittingOut
 
-  // 更开的扇形，居中更醒目
-  const fanAngles = showFace || showBack ? [-16, 16] : [-8, 8]
-  const fanOffsets = showFace || showBack ? [-28, 28] : [-12, 12]
+  const [selected, setSelected] = useState<number | null>(null)
+
+  // 扇形更开，配合超大牌面
+  const fanAngles = showFace || showBack ? [-18, 18] : [-10, 10]
+  const fanOffsets = showFace || showBack ? [-36, 36] : [-16, 16]
 
   const cards: Array<{ card: Card | null; faceDown: boolean; i: number }> =
     showFace && hole
@@ -62,7 +64,6 @@ export function BottomDock({
           <span className={styles.captionLine} aria-hidden />
         </div>
 
-        {/* 居中高亮底牌区 */}
         <div className={styles.handStage}>
           <div className={styles.handGlow} aria-hidden />
           <div className={styles.fan} aria-label="我的底牌">
@@ -73,26 +74,48 @@ export function BottomDock({
                 bestFiveKeys.has(cardKey(card))
               const highlight =
                 bestFiveKeys !== null ? inBest : card !== null && !faceDown
-              const style: CSSProperties = {
-                transform: `translateX(${fanOffsets[i] ?? 0}px) rotate(${fanAngles[i] ?? 0}deg)`,
-                zIndex: i + 1,
-              }
+              const isSelected = selected === i
+              const style = {
+                ['--fan-x' as string]: `${fanOffsets[i] ?? 0}px`,
+                ['--fan-rot' as string]: `${fanAngles[i] ?? 0}deg`,
+                zIndex: isSelected ? 12 : i + 1,
+              } as CSSProperties
+
               return (
-                <div
+                <button
                   key={`fan-${i}`}
-                  className={styles.fanCard}
+                  type="button"
+                  className={[
+                    styles.fanCard,
+                    isSelected ? styles.fanCardSelected : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                   style={style}
+                  disabled={!card}
+                  aria-pressed={isSelected}
+                  aria-label={
+                    card
+                      ? isSelected
+                        ? '取消选中底牌'
+                        : '选中底牌'
+                      : '空位'
+                  }
+                  onClick={() => {
+                    if (!card) return
+                    setSelected((prev) => (prev === i ? null : i))
+                  }}
                 >
                   <CardView
                     card={card}
                     faceDown={faceDown}
-                    size="lg"
-                    highlight={highlight}
+                    size="xl"
+                    highlight={highlight || isSelected}
                     enter={card ? 'deal' : 'none'}
                     delayMs={i * 55}
                     className={styles.heroCard}
                   />
-                </div>
+                </button>
               )
             })}
           </div>

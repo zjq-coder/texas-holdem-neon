@@ -149,9 +149,9 @@
   filter: drop-shadow(0 -4px 18px rgba(212, 175, 55, 0.12));
 }
 
-/* 桌面略让出垂直空间给居中大号底牌 */
+/* 桌面让出更多垂直空间给超大底牌 + 上浮动效 */
 .play-shell--table .play-center [data-table] {
-  max-height: min(100%, calc(100dvh - 12.5rem));
+  max-height: min(100%, calc(100dvh - 14.5rem));
 }
 
 /* 牌型速查：固定在顶部区域展开，绝不压住底栏手牌 */

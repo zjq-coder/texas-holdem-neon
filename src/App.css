@@ -1,0 +1,651 @@
+/* ── 布局壳 ── */
+.app-shell {
+  flex: 1;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: var(--gold-bright);
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(212, 175, 55, 0.25);
+  z-index: 1;
+}
+
+.app-subtitle {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+  font-weight: 500;
+  letter-spacing: 0.45em;
+  color: var(--smoke);
+  z-index: 1;
+}
+
+.start-shell {
+  gap: 1rem;
+}
+
+.start-glow {
+  position: absolute;
+  width: min(70vw, 480px);
+  height: min(70vw, 480px);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(212, 175, 55, 0.14) 0%,
+    rgba(26, 92, 58, 0.08) 40%,
+    transparent 70%
+  );
+  filter: blur(6px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.start-blurb {
+  margin: 0.25rem 0 0.5rem;
+  color: var(--smoke);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  z-index: 1;
+}
+
+.start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  z-index: 1;
+}
+
+.play-shell {
+  flex: 1;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 1rem 1.1rem;
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+  /* 木纹暗厅 */
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(212, 175, 55, 0.06), transparent 48%),
+    radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, 0.55), transparent 48%),
+    linear-gradient(180deg, #1c1410 0%, #100c0a 50%, #0a0806 100%);
+}
+
+.play-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(
+      ellipse at 50% 42%,
+      transparent 28%,
+      rgba(10, 8, 6, 0.4) 70%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+}
+
+.play-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 顶栏 — 对齐参考图顶栏风格 ── */
+.top-bar {
+  width: min(980px, 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.85rem;
+  flex-wrap: wrap;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(42, 30, 20, 0.9), rgba(22, 16, 12, 0.92));
+  border: var(--border-gold-soft);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(212, 175, 55, 0.12);
+}
+
+.top-bar-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* 仿参考图左上角印章 */
+.top-bar-brand::before {
+  content: '德';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  color: var(--gold-bright);
+  background: linear-gradient(145deg, #5a3a18, #2a1a0c);
+  border: 1px solid rgba(212, 175, 55, 0.65);
+  box-shadow: inset 0 0 6px rgba(212, 175, 55, 0.2);
+}
+
+.top-bar-meta {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--gold);
+  flex: 1;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.top-bar-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.top-bar-btn {
+  appearance: none;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 6px;
+  padding: 0.32rem 0.85rem;
+  background: rgba(18, 12, 8, 0.65);
+  color: var(--gold-bright);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.top-bar-btn:hover {
+  border-color: var(--gold);
+  background: rgba(40, 28, 16, 0.85);
+  box-shadow: var(--glow-gold);
+}
+
+/* 提示条 */
+.hint-strip {
+  width: min(980px, 100%);
+  padding: 0.5rem 0.95rem;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(30, 22, 14, 0.85);
+  color: var(--gold-bright);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  text-align: center;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.25);
+}
+
+/* ── 教程 ── */
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.tutorial-mask {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 42%,
+    rgba(18, 12, 8, 0.55) 0%,
+    rgba(8, 6, 4, 0.9) 100%
+  );
+  pointer-events: none;
+}
+
+.tutorial-spotlight {
+  position: absolute;
+  width: min(280px, 70vw);
+  height: min(160px, 28vh);
+  border-radius: 14px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tutorial-spotlight-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  border: 2px solid rgba(212, 175, 55, 0.75);
+  box-shadow:
+    var(--glow-gold),
+    inset 0 0 20px rgba(212, 175, 55, 0.1);
+  animation: pulse-ring 1.8s ease-in-out infinite;
+}
+
+.tutorial-spotlight-dealer {
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tutorial-spotlight-hero {
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tutorial-spotlight-actions {
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(520px, 88vw);
+  height: min(88px, 14vh);
+}
+
+.tutorial-spotlight-board {
+  top: 38%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(420px, 80vw);
+  height: min(120px, 18vh);
+}
+
+.tutorial-card {
+  position: relative;
+  z-index: 2;
+  width: min(440px, 100%);
+  padding: 1.35rem 1.5rem 1.25rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #2a1e14 0%, #1a120e 100%);
+  border: var(--border-gold);
+  box-shadow: var(--shadow-deep), var(--glow-gold);
+  text-align: center;
+}
+
+.tutorial-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
+}
+
+.tutorial-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(154, 139, 118, 0.35);
+  border: 1px solid rgba(154, 139, 118, 0.4);
+}
+
+.tutorial-dot-active {
+  background: var(--gold);
+  border-color: var(--gold-bright);
+  box-shadow: var(--glow-gold);
+}
+
+.tutorial-dot-done {
+  background: var(--gold-dim);
+  border-color: var(--gold-dim);
+}
+
+.tutorial-step-label {
+  margin-left: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--smoke);
+}
+
+.tutorial-title {
+  margin: 0 0 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.16em;
+  color: var(--gold-bright);
+}
+
+.tutorial-body {
+  margin: 0 0 1.1rem;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: var(--smoke);
+  text-align: left;
+}
+
+.tutorial-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+}
+
+.tutorial-btn {
+  min-width: 7.5rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+}
+
+/* ── 设置面板 ── */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.settings-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(8, 6, 4, 0.75);
+  cursor: pointer;
+}
+
+.settings-panel {
+  position: relative;
+  z-index: 1;
+  width: min(400px, 100%);
+  padding: 1.25rem 1.4rem 1.4rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #2a1e14 0%, #16100c 100%);
+  border: var(--border-gold);
+  box-shadow: var(--shadow-deep), var(--glow-gold);
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 0.75rem;
+}
+
+.settings-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.18em;
+  color: var(--gold-bright);
+}
+
+.settings-close {
+  appearance: none;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 6px;
+  padding: 0.3rem 0.85rem;
+  background: transparent;
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.settings-close:hover {
+  box-shadow: var(--glow-gold);
+  border-color: var(--gold);
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+}
+
+.settings-label {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.settings-select {
+  appearance: none;
+  min-width: 7rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(12, 8, 6, 0.85);
+  color: var(--gold-bright);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.settings-check {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+
+/* ── 摊牌弹层 ── */
+.showdown-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    rgba(18, 12, 8, 0.4) 0%,
+    rgba(8, 6, 4, 0.85) 100%
+  );
+}
+
+.showdown-modal {
+  width: min(400px, 100%);
+  padding: 1.35rem 1.5rem 1.4rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #2a1e14 0%, #16100c 100%);
+  border: var(--border-gold);
+  box-shadow: var(--shadow-deep), var(--glow-gold);
+  text-align: center;
+}
+
+.showdown-modal-title {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+}
+
+.showdown-modal--victory .showdown-modal-title {
+  color: var(--gold-bright);
+}
+
+.showdown-modal--loss .showdown-modal-title {
+  color: var(--danger-soft);
+}
+
+.showdown-modal-subtitle {
+  margin: -0.35rem 0 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--smoke);
+}
+
+.showdown-modal-list {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.showdown-modal-line {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto auto;
+  gap: 0.15rem 0.75rem;
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: rgba(212, 175, 55, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+}
+
+.showdown-modal-best-five {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+  margin-top: 0.35rem;
+  justify-content: flex-start;
+}
+
+.showdown-modal-name {
+  font-family: var(--font-body);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.showdown-modal-hand {
+  grid-column: 1;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--gold);
+}
+
+.showdown-modal-amount {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--gold-bright);
+  font-size: 1rem;
+}
+
+.showdown-modal-empty {
+  margin: 0.5rem 0 1rem;
+  color: var(--smoke);
+}
+
+.showdown-modal-next {
+  margin-top: 0.85rem;
+}
+
+/* ── 牌型速查 ── */
+.hand-rank-guide {
+  width: min(980px, 100%);
+  align-self: center;
+}
+
+.hand-rank-toggle {
+  appearance: none;
+  width: 100%;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  background: rgba(22, 16, 12, 0.82);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.hand-rank-toggle:hover {
+  border-color: var(--gold);
+  box-shadow: var(--glow-gold);
+}
+
+.hand-rank-list {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  background: rgba(18, 12, 8, 0.92);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: min(280px, 36vh);
+  overflow: auto;
+}
+
+.hand-rank-item {
+  display: grid;
+  grid-template-columns: 1.4rem 5.5rem 1fr;
+  gap: 0.45rem;
+  align-items: baseline;
+  font-size: 0.82rem;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+}
+
+.hand-rank-item:last-child {
+  border-bottom: 0;
+}
+
+.hand-rank-idx {
+  font-family: var(--font-mono);
+  color: var(--gold);
+  font-size: 0.75rem;
+}
+
+.hand-rank-name {
+  font-family: var(--font-body);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.hand-rank-desc {
+  font-family: var(--font-body);
+  color: var(--smoke);
+  font-size: 0.78rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-spotlight-ring {
+    animation: none;
+  }
+}

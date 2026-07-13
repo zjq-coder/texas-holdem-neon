@@ -1,0 +1,55 @@
+/* 牌宗式豪华牌桌 — 暗木金框 · 绿毡 · 米白牌面 */
+:root {
+  /* 主色 */
+  --wood-deep: #120d0a;
+  --wood: #1c1410;
+  --wood-panel: #241a14;
+  --wood-mid: #3a2a1e;
+  --felt: #1a5c3a;
+  --felt-mid: #227548;
+  --felt-deep: #0f3d28;
+  --felt-highlight: #2d8a58;
+  --gold: #d4af37;
+  --gold-bright: #f0d78c;
+  --gold-dim: #a88b2e;
+  --gold-deep: #6b5420;
+  --cream: #f5f0e4;
+  --cream-face: #faf6ec;
+  --ink: #1a1510;
+  --smoke: #b8a894;
+  --text: #f3ebe0;
+  --text-muted: #9a8b76;
+  --danger: #c45c4a;
+  --danger-soft: #e8a090;
+  --panel: rgba(18, 12, 8, 0.88);
+  --panel-solid: #1a120e;
+  --glass: rgba(28, 20, 14, 0.82);
+
+  /* 兼容旧变量名（组件若仍引用） */
+  --void: var(--wood-deep);
+  --felt-edge: var(--felt-deep);
+  --magenta: var(--gold);
+  --cyan: var(--gold-bright);
+  --radius-lg: 12px;
+
+  --font-display: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-body: "Noto Sans SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Consolas", ui-monospace, monospace;
+
+  --glow-gold: 0 0 10px rgba(212, 175, 55, 0.35), 0 0 22px rgba(212, 175, 55, 0.15);
+  --glow-magenta: var(--glow-gold);
+  --glow-cyan: 0 0 8px rgba(240, 215, 140, 0.25);
+
+  --border-gold: 1px solid rgba(212, 175, 55, 0.55);
+  --border-gold-soft: 1px solid rgba(212, 175, 55, 0.28);
+  --shadow-deep: 0 12px 40px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.4);
+  --frame-outer: linear-gradient(
+    145deg,
+    #3d2e1f 0%,
+    #1a120c 18%,
+    #2a1c12 40%,
+    #120d0a 60%,
+    #3a2a1c 82%,
+    #1a120c 100%
+  );
+}

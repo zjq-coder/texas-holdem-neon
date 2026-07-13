@@ -114,6 +114,7 @@ function PlayingScreen() {
           enabled={!showdown}
         />
       </div>
+      {/* 绝对定位于顶栏下方右侧，向下弹出，不参与底栏布局、不挡手牌 */}
       <HandRankGuide />
       <BottomDock
         state={state}

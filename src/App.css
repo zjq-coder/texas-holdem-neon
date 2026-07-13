@@ -147,13 +147,18 @@
   width: min(1200px, 100%);
 }
 
+/* 牌型速查：固定在顶部区域展开，绝不压住底栏手牌 */
 .play-shell--table .hand-rank-guide {
   position: absolute;
-  left: 0.5rem;
-  bottom: 5.5rem;
-  width: min(220px, 28vw);
-  z-index: 6;
-  opacity: 0.95;
+  top: 3.15rem;
+  left: auto;
+  right: max(0.65rem, calc((100% - 1200px) / 2 + 0.5rem));
+  bottom: auto;
+  width: auto;
+  min-width: 7.5rem;
+  z-index: 18;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 @media (max-width: 900px) {
@@ -173,8 +178,11 @@
   }
 
   .play-shell--table .hand-rank-guide {
-    position: static;
-    width: min(960px, 100%);
+    position: absolute;
+    top: 3rem;
+    right: 0.5rem;
+    left: auto;
+    width: auto;
   }
 }
 
@@ -654,30 +662,38 @@
   margin-top: 0.85rem;
 }
 
-/* ── 牌型速查 ── */
+/* ── 牌型速查（顶部锚点 + 向下弹出，避开底栏手牌） ── */
 .hand-rank-guide {
-  width: min(980px, 100%);
-  align-self: center;
+  position: relative;
+  width: auto;
+  align-self: flex-start;
   pointer-events: auto;
+  z-index: 18;
 }
 
 .hand-rank-guide-open {
-  z-index: 8;
+  z-index: 22;
 }
 
 .hand-rank-toggle {
   appearance: none;
-  width: 100%;
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  width: auto;
+  white-space: nowrap;
+  border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 8px;
-  padding: 0.45rem 0.9rem;
-  background: rgba(22, 16, 12, 0.82);
-  color: var(--gold);
+  padding: 0.38rem 0.85rem;
+  background: linear-gradient(
+    180deg,
+    rgba(42, 30, 20, 0.95),
+    rgba(18, 12, 8, 0.96)
+  );
+  color: var(--gold-bright);
   font-family: var(--font-display);
-  font-size: 0.82rem;
-  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   transition:
     box-shadow 0.15s ease,
     border-color 0.15s ease;
@@ -688,27 +704,81 @@
   box-shadow: var(--glow-gold);
 }
 
-.hand-rank-list {
-  list-style: none;
-  margin: 0.4rem 0 0;
-  padding: 0.55rem 0.7rem;
-  border-radius: 8px;
-  border: 1px solid rgba(212, 175, 55, 0.22);
-  background: rgba(18, 12, 8, 0.92);
+.hand-rank-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: auto;
+  width: min(320px, calc(100vw - 1.5rem));
+  max-height: min(52vh, calc(100dvh - 10.5rem));
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  max-height: min(280px, 36vh);
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(36, 26, 18, 0.98) 0%,
+    rgba(14, 10, 8, 0.98) 100%
+  );
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    var(--glow-gold);
+  overflow: hidden;
+  z-index: 30;
+}
+
+.hand-rank-popover-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--gold-bright);
+  flex-shrink: 0;
+}
+
+.hand-rank-close {
+  appearance: none;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+  background: transparent;
+  color: var(--smoke);
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.hand-rank-close:hover {
+  color: var(--gold-bright);
+  border-color: var(--gold);
+}
+
+.hand-rank-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.45rem 0.65rem 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
   overflow: auto;
+  flex: 1;
+  min-height: 0;
+  /* 限制高度，保证不伸到底栏手牌区 */
+  max-height: min(48vh, calc(100dvh - 12rem));
 }
 
 .hand-rank-item {
   display: grid;
-  grid-template-columns: 1.4rem 5.5rem 1fr;
-  gap: 0.45rem;
+  grid-template-columns: 1.25rem 5.2rem 1fr;
+  gap: 0.35rem;
   align-items: baseline;
-  font-size: 0.82rem;
-  padding: 0.2rem 0;
+  font-size: 0.78rem;
+  padding: 0.28rem 0.15rem;
   border-bottom: 1px solid rgba(212, 175, 55, 0.08);
 }
 
@@ -719,7 +789,7 @@
 .hand-rank-idx {
   font-family: var(--font-mono);
   color: var(--gold);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
 }
 
 .hand-rank-name {
@@ -731,7 +801,8 @@
 .hand-rank-desc {
   font-family: var(--font-body);
   color: var(--smoke);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
 }
 
 @media (prefers-reduced-motion: reduce) {

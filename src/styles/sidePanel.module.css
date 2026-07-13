@@ -1,0 +1,255 @@
+.panel {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.5rem 0.5rem 0.55rem;
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(36, 26, 18, 0.94) 0%,
+    rgba(16, 12, 8, 0.96) 100%
+  );
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(212, 175, 55, 0.12),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+  max-height: 100%;
+  min-height: 0;
+  overflow: auto;
+  align-self: stretch;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.eyebrow {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  color: var(--smoke);
+}
+
+.stageTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--gold-bright);
+  line-height: 1.3;
+}
+
+.stageSub {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--smoke);
+  letter-spacing: 0.04em;
+}
+
+.sectionLabel {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+}
+
+.playerCard {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+  padding: 0.55rem;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+}
+
+.avatar {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  background: linear-gradient(145deg, #4a3420, #1a120c);
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.12);
+}
+
+.playerMeta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.playerName {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  color: var(--cream);
+  letter-spacing: 0.04em;
+}
+
+.playerStack {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold-bright);
+}
+
+.stackCap {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--smoke);
+}
+
+.barTrack {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  overflow: hidden;
+  margin-top: 0.15rem;
+}
+
+.barFillHero {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold-bright));
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
+  transition: width 0.35s ease;
+}
+
+.barFillOpp {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #3d5c48, #6a9a78);
+  transition: width 0.35s ease;
+}
+
+.barHint {
+  font-size: 0.7rem;
+  color: var(--smoke);
+}
+
+.oppList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.oppRow {
+  padding: 0.4rem 0.45rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.oppActing {
+  border-color: rgba(212, 175, 55, 0.55);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+}
+
+.oppDim {
+  opacity: 0.48;
+}
+
+.oppHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.oppName {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--cream);
+}
+
+.oppStack {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--gold);
+}
+
+.oppStatus {
+  font-size: 0.68rem;
+  color: var(--smoke);
+}
+
+.resourceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.resourceCell {
+  padding: 0.4rem 0.45rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.resourceKey {
+  font-size: 0.68rem;
+  color: var(--smoke);
+  letter-spacing: 0.08em;
+}
+
+.resourceVal {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold-bright);
+}
+
+.hintBox {
+  margin-top: auto;
+  padding: 0.5rem 0.55rem;
+  border-radius: 8px;
+  background: rgba(212, 175, 55, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+}
+
+.hintText {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--cream);
+}
+
+@media (max-width: 900px) {
+  .panel {
+    width: 100%;
+    max-height: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .section {
+    flex: 1 1 200px;
+  }
+}

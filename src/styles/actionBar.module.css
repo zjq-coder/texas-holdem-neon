@@ -223,3 +223,53 @@
   letter-spacing: 0.08em;
   padding: 0.35rem 0;
 }
+
+/* 紧凑横排（底栏） */
+.compact {
+  gap: 0.4rem;
+  padding: 0.2rem 0;
+}
+
+.compact .status {
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+.compactMeta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--smoke);
+}
+
+.compact .actions {
+  gap: 0.4rem;
+}
+
+.compact .btn {
+  padding: 0.42rem 0.85rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.compact .raisePanel {
+  max-width: none;
+  gap: 0.3rem;
+}
+
+.compact .raiseMeta {
+  font-size: 0.72rem;
+}
+
+.compact .slider {
+  height: 1.1rem;
+}
+
+.compact .preset {
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+}
+
+.compact .waiting {
+  padding: 0.45rem 0;
+  font-size: 0.85rem;
+}

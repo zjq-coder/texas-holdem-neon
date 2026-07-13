@@ -77,8 +77,17 @@ export function Table({
 
   return (
     <div className={styles.stage} data-table>
+      {/* 画框四角雕花 */}
+      <span className={`${styles.cornerOrnament} ${styles.cornerTL}`} aria-hidden />
+      <span className={`${styles.cornerOrnament} ${styles.cornerTR}`} aria-hidden />
+      <span className={`${styles.cornerOrnament} ${styles.cornerBL}`} aria-hidden />
+      <span className={`${styles.cornerOrnament} ${styles.cornerBR}`} aria-hidden />
+      <span className={styles.railStuds} aria-hidden />
+
       <div className={styles.felt}>
         <div className={styles.feltInner} />
+        <div className={styles.feltRailInlay} aria-hidden />
+        <div className={styles.feltMedallion} aria-hidden />
 
         <div className={styles.center}>
           <div className={styles.streetTag}>

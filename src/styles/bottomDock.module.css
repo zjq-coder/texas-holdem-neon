@@ -1,0 +1,104 @@
+.dock {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.frame {
+  position: relative;
+  border-radius: 12px;
+  padding: 0.35rem 0.65rem 0.4rem;
+  background: linear-gradient(
+    180deg,
+    rgba(42, 30, 20, 0.96) 0%,
+    rgba(16, 12, 8, 0.98) 100%
+  );
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(212, 175, 55, 0.15);
+}
+
+.frame::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 9px;
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  pointer-events: none;
+}
+
+/* 横排：左扇形手牌 | 右操作 */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 0;
+}
+
+.handCol {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  width: 7.5rem;
+}
+
+.caption {
+  font-size: 0.68rem;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+.fan {
+  position: relative;
+  width: 6.5rem;
+  height: 3.9rem;
+  perspective: 600px;
+}
+
+.fanCard {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin-left: -1.35rem;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+}
+
+.actionsWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.actionsWrap :global([data-action-bar]) {
+  width: 100%;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+.actionsWrap :global([data-action-bar])::before {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .handCol {
+    width: 100%;
+  }
+
+  .fan {
+    margin: 0 auto;
+  }
+}

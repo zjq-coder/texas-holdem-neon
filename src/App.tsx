@@ -1,14 +1,21 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { isHeroTurn } from './engine/game'
 import { suggestHint } from './engine/hints'
-import { ActionBar } from './ui/ActionBar'
+import type { Card } from './engine/types'
+import { BottomDock } from './ui/BottomDock'
 import { HandRankGuide } from './ui/HandRankGuide'
+import { HotkeysPanel } from './ui/HotkeysPanel'
 import { SettingsPanel } from './ui/SettingsPanel'
 import { ShowdownModal } from './ui/ShowdownModal'
+import { SidePanel } from './ui/SidePanel'
 import { StartScreen } from './ui/StartScreen'
 import { Table } from './ui/Table'
 import { Tutorial } from './ui/Tutorial'
 import { GameProvider, useGame } from './store/gameStore'
+
+function cardKey(c: Card): string {
+  return `${c.rank}${c.suit}`
+}
 
 function TopBar({
   onOpenSettings,
@@ -79,22 +86,42 @@ function PlayingScreen() {
     state.street === 'showdown' ||
     state.street === 'handOver'
 
+  const bestFiveKeys = useMemo(() => {
+    if (!showdown || !state.winners?.length) return null
+    const keys = new Set<string>()
+    for (const w of state.winners) {
+      for (const c of w.bestFive ?? []) keys.add(cardKey(c))
+    }
+    return keys.size > 0 ? keys : null
+  }, [showdown, state.winners])
+
   return (
-    <main className="play-shell">
+    <main className="play-shell play-shell--table">
       <TopBar
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenTutorial={() => setTutorialOpen(true)}
       />
-      <Table state={state} revealAll={showdown} />
-      <HandRankGuide />
-      {hint && (
-        <div className="hint-strip" role="status">
-          提示：{hint}
+      <div className="play-main">
+        <SidePanel state={state} hint={hint} />
+        <div className="play-center">
+          <Table state={state} revealAll={showdown} />
         </div>
-      )}
-      {!showdown && (
-        <ActionBar state={state} onAction={dispatchPlayerAction} />
-      )}
+        <HotkeysPanel
+          state={state}
+          onAction={dispatchPlayerAction}
+          onOpenSettings={() => setSettingsOpen(true)}
+          onOpenTutorial={() => setTutorialOpen(true)}
+          enabled={!showdown}
+        />
+      </div>
+      {/* 绝对定位于顶栏下方右侧，向下弹出，不参与底栏布局、不挡手牌 */}
+      <HandRankGuide />
+      <BottomDock
+        state={state}
+        onAction={dispatchPlayerAction}
+        bestFiveKeys={bestFiveKeys}
+        hideActions={showdown}
+      />
       <ShowdownModal
         state={state}
         onNextHand={startNewHand}

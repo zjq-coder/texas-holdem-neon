@@ -145,6 +145,13 @@
 .play-shell--table [data-bottom-dock] {
   flex-shrink: 0;
   width: min(1200px, 100%);
+  /* 底栏略抬视觉权重，手牌成为焦点 */
+  filter: drop-shadow(0 -4px 18px rgba(212, 175, 55, 0.12));
+}
+
+/* 桌面略让出垂直空间给居中大号底牌 */
+.play-shell--table .play-center [data-table] {
+  max-height: min(100%, calc(100dvh - 12.5rem));
 }
 
 /* 牌型速查：固定在顶部区域展开，绝不压住底栏手牌 */

@@ -15,7 +15,9 @@ function cardKey(c: Card): string {
   return `${c.rank}${c.suit}`
 }
 
-/** 紧凑底栏：左扇形手牌 + 右操作，整行适配视口无需滚动 */
+/**
+ * 底部手牌托盘：底牌居中大号扇形突出，操作栏在下方。
+ */
 export function BottomDock({
   state,
   onAction,
@@ -29,8 +31,9 @@ export function BottomDock({
   const showBack =
     hasCards && !showFace && !hero?.folded && !hero?.sittingOut
 
-  const fanAngles = showFace || showBack ? [-12, 12] : [0, 0]
-  const fanOffsets = showFace || showBack ? [-14, 14] : [0, 0]
+  // 更开的扇形，居中更醒目
+  const fanAngles = showFace || showBack ? [-16, 16] : [-8, 8]
+  const fanOffsets = showFace || showBack ? [-28, 28] : [-12, 12]
 
   const cards: Array<{ card: Card | null; faceDown: boolean; i: number }> =
     showFace && hole
@@ -49,51 +52,57 @@ export function BottomDock({
   return (
     <div className={styles.dock} data-bottom-dock>
       <div className={styles.frame}>
-        <div className={styles.row}>
-          <div className={styles.handCol}>
-            <div className={styles.caption}>
-              手牌 {hole?.length ?? 0}
-              {hero?.folded ? ' · 弃' : ''}
-              {hero?.allIn ? ' · 全下' : ''}
-            </div>
-            <div className={styles.fan} aria-label="我的手牌">
-              {cards.map(({ card, faceDown, i }) => {
-                const inBest =
-                  card !== null &&
-                  bestFiveKeys !== null &&
-                  bestFiveKeys.has(cardKey(card))
-                const highlight =
-                  bestFiveKeys !== null ? inBest : card !== null && !faceDown
-                const style: CSSProperties = {
-                  transform: `translateX(${fanOffsets[i] ?? 0}px) rotate(${fanAngles[i] ?? 0}deg)`,
-                  zIndex: i + 1,
-                }
-                return (
-                  <div
-                    key={`fan-${i}`}
-                    className={styles.fanCard}
-                    style={style}
-                  >
-                    <CardView
-                      card={card}
-                      faceDown={faceDown}
-                      size="md"
-                      highlight={highlight}
-                      enter={card ? 'deal' : 'none'}
-                      delayMs={i * 50}
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {!hideActions && (
-            <div className={styles.actionsWrap}>
-              <ActionBar state={state} onAction={onAction} compact />
-            </div>
-          )}
+        <div className={styles.caption}>
+          <span className={styles.captionLine} aria-hidden />
+          <span className={styles.captionText}>
+            我的底牌
+            {hero?.folded ? ' · 已弃牌' : ''}
+            {hero?.allIn ? ' · 全下' : ''}
+          </span>
+          <span className={styles.captionLine} aria-hidden />
         </div>
+
+        {/* 居中高亮底牌区 */}
+        <div className={styles.handStage}>
+          <div className={styles.handGlow} aria-hidden />
+          <div className={styles.fan} aria-label="我的底牌">
+            {cards.map(({ card, faceDown, i }) => {
+              const inBest =
+                card !== null &&
+                bestFiveKeys !== null &&
+                bestFiveKeys.has(cardKey(card))
+              const highlight =
+                bestFiveKeys !== null ? inBest : card !== null && !faceDown
+              const style: CSSProperties = {
+                transform: `translateX(${fanOffsets[i] ?? 0}px) rotate(${fanAngles[i] ?? 0}deg)`,
+                zIndex: i + 1,
+              }
+              return (
+                <div
+                  key={`fan-${i}`}
+                  className={styles.fanCard}
+                  style={style}
+                >
+                  <CardView
+                    card={card}
+                    faceDown={faceDown}
+                    size="lg"
+                    highlight={highlight}
+                    enter={card ? 'deal' : 'none'}
+                    delayMs={i * 55}
+                    className={styles.heroCard}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {!hideActions && (
+          <div className={styles.actionsWrap}>
+            <ActionBar state={state} onAction={onAction} compact />
+          </div>
+        )}
       </div>
     </div>
   )

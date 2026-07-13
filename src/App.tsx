@@ -4,6 +4,7 @@ import { suggestHint } from './engine/hints'
 import type { Card } from './engine/types'
 import { BottomDock } from './ui/BottomDock'
 import { HandRankGuide } from './ui/HandRankGuide'
+import { HotkeysPanel } from './ui/HotkeysPanel'
 import { SettingsPanel } from './ui/SettingsPanel'
 import { ShowdownModal } from './ui/ShowdownModal'
 import { SidePanel } from './ui/SidePanel'
@@ -104,9 +105,16 @@ function PlayingScreen() {
         <SidePanel state={state} hint={hint} />
         <div className="play-center">
           <Table state={state} revealAll={showdown} />
-          <HandRankGuide />
         </div>
+        <HotkeysPanel
+          state={state}
+          onAction={dispatchPlayerAction}
+          onOpenSettings={() => setSettingsOpen(true)}
+          onOpenTutorial={() => setTutorialOpen(true)}
+          enabled={!showdown}
+        />
       </div>
+      <HandRankGuide />
       <BottomDock
         state={state}
         onAction={dispatchPlayerAction}

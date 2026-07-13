@@ -1,13 +1,13 @@
 .dock {
-  width: min(1100px, 100%);
+  width: min(1200px, 100%);
   margin: 0 auto;
   flex-shrink: 0;
 }
 
 .frame {
   position: relative;
-  border-radius: 14px;
-  padding: 0.55rem 0.85rem 0.7rem;
+  border-radius: 12px;
+  padding: 0.35rem 0.65rem 0.4rem;
   background: linear-gradient(
     180deg,
     rgba(42, 30, 20, 0.96) 0%,
@@ -15,111 +15,73 @@
   );
   border: 1px solid rgba(212, 175, 55, 0.45);
   box-shadow:
-    0 10px 32px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(212, 175, 55, 0.18),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+    0 6px 20px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(212, 175, 55, 0.15);
 }
 
-/* 角部金线装饰 */
 .frame::before {
   content: '';
   position: absolute;
-  inset: 4px;
-  border-radius: 11px;
-  border: 1px solid rgba(212, 175, 55, 0.18);
+  inset: 3px;
+  border-radius: 9px;
+  border: 1px solid rgba(212, 175, 55, 0.14);
   pointer-events: none;
 }
 
-.caption {
+/* 横排：左扇形手牌 | 右操作 */
+.row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  font-size: 0.78rem;
-  color: var(--gold);
-  letter-spacing: 0.06em;
-  margin-bottom: 0.35rem;
-  padding: 0 0.25rem;
-  font-family: var(--font-display);
+  gap: 0.65rem;
+  min-height: 0;
 }
 
-.captionTip {
-  color: var(--smoke);
-  font-family: var(--font-body);
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-}
-
-.fanArea {
+.handCol {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.45rem;
-  min-height: 6.2rem;
-  padding: 0.35rem 0 0.25rem;
+  gap: 0.1rem;
+  width: 7.5rem;
+}
+
+.caption {
+  font-size: 0.68rem;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  font-family: var(--font-display);
+  white-space: nowrap;
 }
 
 .fan {
   position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  height: 6.2rem;
-  width: min(280px, 70vw);
-  perspective: 800px;
+  width: 6.5rem;
+  height: 3.9rem;
+  perspective: 600px;
 }
 
 .fanCard {
   position: absolute;
   bottom: 0;
   left: 50%;
-  margin-left: -2rem; /* half of lg card width approx */
+  margin-left: -1.35rem;
   transform-origin: 50% 100%;
-  transition: transform 0.2s ease;
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.45));
-}
-
-.fanCard:hover {
-  z-index: 10 !important;
-  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.55))
-    drop-shadow(0 0 8px rgba(212, 175, 55, 0.35));
-}
-
-.boardStrip {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 0.25rem 0.5rem;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(212, 175, 55, 0.12);
-}
-
-.boardLabel {
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  color: var(--smoke);
-  margin-right: 0.25rem;
-  font-family: var(--font-display);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
 }
 
 .actionsWrap {
-  margin-top: 0.35rem;
+  flex: 1;
+  min-width: 0;
 }
 
-/* ActionBar 嵌在底栏内时去掉外层重复边框感 */
 .actionsWrap :global([data-action-bar]) {
   width: 100%;
   margin: 0;
   border: none;
   box-shadow: none;
   background: transparent;
-  padding: 0.35rem 0 0.15rem;
+  padding: 0;
   border-radius: 0;
-  border-top: 1px solid rgba(212, 175, 55, 0.18);
 }
 
 .actionsWrap :global([data-action-bar])::before {
@@ -127,16 +89,16 @@
 }
 
 @media (max-width: 720px) {
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .handCol {
+    width: 100%;
+  }
+
   .fan {
-    height: 5.2rem;
-    width: min(220px, 80vw);
-  }
-
-  .fanCard {
-    margin-left: -1.5rem;
-  }
-
-  .captionTip {
-    display: none;
+    margin: 0 auto;
   }
 }

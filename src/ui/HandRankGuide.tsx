@@ -22,6 +22,7 @@ export function HandRankGuide() {
       <button
         type="button"
         className="hand-rank-toggle"
+        data-hand-rank-toggle
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >

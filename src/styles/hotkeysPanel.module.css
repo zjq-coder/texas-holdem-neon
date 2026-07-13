@@ -1,0 +1,123 @@
+.panel {
+  width: 168px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.55rem 0.5rem 0.6rem;
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(36, 26, 18, 0.94) 0%,
+    rgba(16, 12, 8, 0.96) 100%
+  );
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(212, 175, 55, 0.12);
+  align-self: stretch;
+  min-height: 0;
+  overflow: auto;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--gold-bright);
+  text-align: center;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.28rem 0.3rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.kbd {
+  flex-shrink: 0;
+  min-width: 2.4rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 0.18rem 0.28rem;
+  border-radius: 4px;
+  color: var(--gold-bright);
+  background: linear-gradient(180deg, #3a2a1a, #1a120c);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 0.05rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: var(--cream);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hint {
+  font-size: 0.62rem;
+  color: var(--smoke);
+  letter-spacing: 0.02em;
+}
+
+.note {
+  margin: 0.15rem 0 0;
+  font-size: 0.68rem;
+  color: var(--smoke);
+  text-align: center;
+  line-height: 1.4;
+}
+
+@media (max-width: 1100px) {
+  .panel {
+    width: 148px;
+  }
+}
+
+@media (max-width: 900px) {
+  .panel {
+    width: 100%;
+    max-height: 140px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .title {
+    width: 100%;
+  }
+
+  .list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .row {
+    flex: 1 1 42%;
+  }
+}

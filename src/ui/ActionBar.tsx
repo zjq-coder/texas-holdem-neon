@@ -11,6 +11,8 @@ export interface ActionBarProps {
   state: GameState
   onAction: (action: PlayerAction) => void
   enabled?: boolean
+  /** 紧凑模式：用于底部托盘横排布局 */
+  compact?: boolean
 }
 
 function potTotal(state: GameState): number {
@@ -21,7 +23,12 @@ function clamp(n: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, n))
 }
 
-export function ActionBar({ state, onAction, enabled = true }: ActionBarProps) {
+export function ActionBar({
+  state,
+  onAction,
+  enabled = true,
+  compact = false,
+}: ActionBarProps) {
   const heroTurn = enabled && isHeroTurn(state)
   const legal = heroTurn ? getLegalActions(state) : []
   const bounds = heroTurn ? getRaiseBounds(state) : null
@@ -67,29 +74,55 @@ export function ActionBar({ state, onAction, enabled = true }: ActionBarProps) {
     ]
   }, [bounds, hero, pot, state.currentBet, toCall])
 
+  const rootClass = [
+    styles.bar,
+    compact ? styles.compact : '',
+    !heroTurn ? styles.disabled : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   if (!heroTurn) {
     return (
-      <div className={`${styles.bar} ${styles.disabled}`} data-action-bar>
+      <div className={rootClass} data-action-bar>
         <div className={styles.waiting}>等待对手行动…</div>
       </div>
     )
   }
 
   return (
-    <div className={styles.bar} data-action-bar>
+    <div className={rootClass} data-action-bar>
       <div className={styles.status}>
-        <span className={styles.statusStrong}>轮到你行动</span>
-        <span>
-          跟注额{' '}
-          <strong style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>
-            {toCall.toLocaleString('zh-CN')}
-          </strong>
-          {' · '}
-          底池{' '}
-          <strong style={{ color: 'var(--gold)', fontFamily: 'var(--font-mono)' }}>
+        <span className={styles.statusStrong}>轮到你</span>
+        {!compact && (
+          <span>
+            跟注{' '}
+            <strong
+              style={{
+                color: 'var(--text)',
+                fontFamily: 'var(--font-mono)',
+              }}
+            >
+              {toCall.toLocaleString('zh-CN')}
+            </strong>
+            {' · '}
+            底池{' '}
+            <strong
+              style={{
+                color: 'var(--gold)',
+                fontFamily: 'var(--font-mono)',
+              }}
+            >
+              {pot.toLocaleString('zh-CN')}
+            </strong>
+          </span>
+        )}
+        {compact && (
+          <span className={styles.compactMeta}>
+            跟 {toCall.toLocaleString('zh-CN')} · 池{' '}
             {pot.toLocaleString('zh-CN')}
-          </strong>
-        </span>
+          </span>
+        )}
       </div>
 
       <div className={styles.actions}>

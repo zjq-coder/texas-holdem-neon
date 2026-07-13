@@ -1,8 +1,9 @@
-# 霓虹德州 · CYBER HOLD'EM
+# 皇家德州 · Texas Hold'em
 
-浏览器本地可玩的 **6 人无限注德州扑克**：你 vs 5 个 AI，赛博霓虹赌场风格界面，含教程与练习提示。
+浏览器本地可玩的 **6 人无限注德州扑克**：你 vs 5 个 AI，中式豪华绿毡金框界面，含教程与练习提示。
 
-**在线仓库：** [zjq-coder/texas-holdem-neon](https://github.com/zjq-coder/texas-holdem-neon)
+**在线仓库：** [zjq-coder/texas-holdem-neon](https://github.com/zjq-coder/texas-holdem-neon)  
+**变更记录：** [CHANGELOG.md](./CHANGELOG.md)
 
 ---
 
@@ -11,7 +12,7 @@
 - **完整一手 NLHE**：盲注、翻前/翻牌/转牌/河牌、加注与全下、摊牌比牌
 - **边池**：多层全下时按资格分池，筹码守恒
 - **6 人桌**：Hero + VEX / NOVA / GHOST / PULSE / HEX（三档 AI：紧 / 标准 / 松）
-- **赛博霓虹 UI**：电弧牌桌、发牌与筹码动效、行动座位光环
+- **金框绿毡 UI**：暗木大厅、左侧资源栏、右侧快捷键、底部居中超大底牌（悬停/选中上浮）
 - **教程与练习**：分步引导、牌型速查、本手操作提示（不代打）
 - **设置**：AI 难度、音效、动画速度、提示开关（`localStorage` 持久化）
 - **会话终局**：破产 / 独赢后可重新开始

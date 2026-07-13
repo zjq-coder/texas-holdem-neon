@@ -32,7 +32,7 @@ export interface CardViewProps {
   faceDown?: boolean
   highlight?: boolean
   className?: string
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   /** Enter animation: deal-in (hole) or rotateY flip (community). Class-based for reduced-motion. */
   enter?: CardEnterAnim
   /** Stagger delay in ms for deal/flip sequences */
@@ -49,7 +49,13 @@ export function CardView({
   delayMs = 0,
 }: CardViewProps) {
   const sizeClass =
-    size === 'sm' ? styles.sm : size === 'lg' ? styles.lg : ''
+    size === 'sm'
+      ? styles.sm
+      : size === 'xl'
+        ? styles.xl
+        : size === 'lg'
+          ? styles.lg
+          : ''
   const enterClass =
     enter === 'deal' ? styles.dealIn : enter === 'flip' ? styles.flipIn : ''
   const rootClass = [

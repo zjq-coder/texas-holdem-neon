@@ -28,9 +28,16 @@ export function SeatView({
   bestFiveKeys = null,
 }: SeatViewProps) {
   const hole = seat.holeCards
+  // 英雄手牌在底部扇形托盘展示，桌上座位只保留铭牌/筹码
+  const hideHoleOnTable = seat.isHero
   const showFace =
-    showCards && hole !== null && hole.length > 0 && !seat.sittingOut
+    !hideHoleOnTable &&
+    showCards &&
+    hole !== null &&
+    hole.length > 0 &&
+    !seat.sittingOut
   const showBack =
+    !hideHoleOnTable &&
     !showFace &&
     hole !== null &&
     hole.length > 0 &&
@@ -70,45 +77,48 @@ export function SeatView({
         {seat.sittingOut ? '旁观' : seat.stack.toLocaleString('zh-CN')}
       </div>
 
-      <div
-        className={`${styles.hole} ${seat.isHero ? styles.holeHero : ''}`.trim()}
-      >
-        {showFace &&
-          hole!.map((c, i) => {
-            const inBest =
-              bestFiveKeys !== null && bestFiveKeys.has(cardKey(c))
-            // Live: soft hero highlight; showdown: only best-five cards
-            const highlight =
-              bestFiveKeys !== null ? inBest : seat.isHero
-            return (
+      {!hideHoleOnTable && (
+        <div className={styles.hole}>
+          {showFace &&
+            hole!.map((c, i) => {
+              const inBest =
+                bestFiveKeys !== null && bestFiveKeys.has(cardKey(c))
+              const highlight =
+                bestFiveKeys !== null ? inBest : false
+              return (
+                <CardView
+                  key={`${seat.id}-h-${c.rank}${c.suit}-${i}`}
+                  card={c}
+                  highlight={highlight}
+                  size="sm"
+                  enter="deal"
+                  delayMs={i * 60}
+                />
+              )
+            })}
+          {showBack &&
+            [0, 1].map((i) => (
               <CardView
-                key={`${seat.id}-h-${c.rank}${c.suit}-${i}`}
-                card={c}
-                highlight={highlight}
-                size={seat.isHero ? 'lg' : 'sm'}
+                key={`${seat.id}-b-${i}`}
+                card={hole![i] ?? hole![0]!}
+                faceDown
+                size="sm"
                 enter="deal"
                 delayMs={i * 60}
               />
-            )
-          })}
-        {showBack &&
-          [0, 1].map((i) => (
-            <CardView
-              key={`${seat.id}-b-${i}`}
-              card={hole![i] ?? hole![0]!}
-              faceDown
-              size={seat.isHero ? 'lg' : 'sm'}
-              enter="deal"
-              delayMs={i * 60}
-            />
-          ))}
-        {!showFace && !showBack && (
-          <>
-            <CardView card={null} size={seat.isHero ? 'lg' : 'sm'} />
-            <CardView card={null} size={seat.isHero ? 'lg' : 'sm'} />
-          </>
-        )}
-      </div>
+            ))}
+          {!showFace && !showBack && (
+            <>
+              <CardView card={null} size="sm" />
+              <CardView card={null} size="sm" />
+            </>
+          )}
+        </div>
+      )}
+
+      {hideHoleOnTable && (
+        <div className={styles.heroSeatNote}>手牌见底部</div>
+      )}
 
       <div className={styles.betRow}>
         <ChipStack amount={seat.betThisStreet} />

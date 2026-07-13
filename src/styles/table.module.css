@@ -189,7 +189,7 @@
 
 .seat0 {
   left: 50%;
-  top: 91%;
+  top: 86%;
 }
 
 .seat1 {
@@ -389,12 +389,21 @@
   min-height: 5.45rem;
 }
 
+.heroSeatNote {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--smoke);
+  opacity: 0.85;
+}
+
 .betRow {
   min-height: 1.35rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+
 
 @media (max-width: 720px) {
   .stage {

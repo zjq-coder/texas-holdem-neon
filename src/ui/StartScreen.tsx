@@ -6,9 +6,9 @@ export function StartScreen() {
   return (
     <main className="app-shell start-shell">
       <div className="start-glow" aria-hidden />
-      <h1 className="app-title">霓虹德州</h1>
-      <p className="app-subtitle">CYBER HOLD&apos;EM</p>
-      <p className="start-blurb">六人桌 · 无限注 · 你 vs 五位霓虹对手</p>
+      <h1 className="app-title">皇家德州</h1>
+      <p className="app-subtitle">TEXAS HOLD&apos;EM</p>
+      <p className="start-blurb">六人桌 · 无限注 · 绿毡金框 · 你 vs 五位对手</p>
       <div className="start-actions">
         <button
           type="button"

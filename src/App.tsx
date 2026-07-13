@@ -21,7 +21,7 @@ function TopBar({
 
   return (
     <header className="top-bar">
-      <div className="top-bar-brand">霓虹德州</div>
+      <div className="top-bar-brand">皇家德州</div>
       <div className="top-bar-meta">
         盲注 {state.smallBlind}/{state.bigBlind}
       </div>

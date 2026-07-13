@@ -1,3 +1,4 @@
+/* ── 布局壳 ── */
 .app-shell {
   flex: 1;
   min-height: 100vh;
@@ -7,7 +8,6 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  background: var(--void);
   text-align: center;
   padding: 2rem;
   position: relative;
@@ -17,22 +17,23 @@
 .app-title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: var(--text);
-  text-shadow: var(--glow-magenta);
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: var(--gold-bright);
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(212, 175, 55, 0.25);
   z-index: 1;
 }
 
 .app-subtitle {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(0.95rem, 2.4vw, 1.25rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.2vw, 1.1rem);
   font-weight: 500;
-  letter-spacing: 0.35em;
-  color: var(--cyan);
-  text-shadow: var(--glow-cyan);
+  letter-spacing: 0.45em;
+  color: var(--smoke);
   z-index: 1;
 }
 
@@ -42,16 +43,16 @@
 
 .start-glow {
   position: absolute;
-  width: min(70vw, 520px);
-  height: min(70vw, 520px);
+  width: min(70vw, 480px);
+  height: min(70vw, 480px);
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(255, 43, 214, 0.22) 0%,
-    rgba(45, 226, 230, 0.1) 40%,
+    rgba(212, 175, 55, 0.14) 0%,
+    rgba(26, 92, 58, 0.08) 40%,
     transparent 70%
   );
-  filter: blur(8px);
+  filter: blur(6px);
   pointer-events: none;
   z-index: 0;
 }
@@ -61,7 +62,7 @@
   color: var(--smoke);
   font-family: var(--font-body);
   font-size: 0.95rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   z-index: 1;
 }
 
@@ -73,47 +74,6 @@
   z-index: 1;
 }
 
-.primary-cta,
-.ghost-cta {
-  appearance: none;
-  border-radius: 999px;
-  padding: 0.75rem 1.6rem;
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  letter-spacing: 0.14em;
-  cursor: pointer;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.primary-cta {
-  border: 1px solid var(--magenta);
-  color: var(--text);
-  background: linear-gradient(
-    135deg,
-    rgba(255, 43, 214, 0.35),
-    rgba(45, 226, 230, 0.18)
-  );
-  box-shadow: var(--glow-magenta);
-}
-
-.primary-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--glow-magenta), var(--glow-cyan);
-}
-
-.ghost-cta {
-  border: 1px solid rgba(45, 226, 230, 0.45);
-  color: var(--cyan);
-  background: transparent;
-}
-
-.ghost-cta:hover {
-  box-shadow: var(--glow-cyan);
-  transform: translateY(-1px);
-}
-
 .play-shell {
   flex: 1;
   min-height: 100vh;
@@ -121,20 +81,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.75rem 1rem 1.25rem;
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(255, 43, 214, 0.1), transparent 46%),
-    radial-gradient(ellipse at 18% 55%, rgba(255, 43, 214, 0.05), transparent 38%),
-    radial-gradient(ellipse at 82% 60%, rgba(45, 226, 230, 0.06), transparent 40%),
-    radial-gradient(ellipse at 50% 100%, rgba(45, 226, 230, 0.07), transparent 42%),
-    var(--void);
+  gap: 0.55rem;
+  padding: 0.65rem 1rem 1.1rem;
   box-sizing: border-box;
   position: relative;
   isolation: isolate;
+  /* 木纹暗厅 */
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(212, 175, 55, 0.06), transparent 48%),
+    radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, 0.55), transparent 48%),
+    linear-gradient(180deg, #1c1410 0%, #100c0a 50%, #0a0806 100%);
 }
 
-/* Ambient vignette — night-club casino void */
 .play-shell::before {
   content: '';
   position: fixed;
@@ -143,10 +101,10 @@
   z-index: 0;
   background:
     radial-gradient(
-      ellipse at 50% 45%,
-      transparent 32%,
-      rgba(7, 6, 11, 0.45) 72%,
-      rgba(0, 0, 0, 0.72) 100%
+      ellipse at 50% 42%,
+      transparent 28%,
+      rgba(10, 8, 6, 0.4) 70%,
+      rgba(0, 0, 0, 0.7) 100%
     );
 }
 
@@ -155,77 +113,103 @@
   z-index: 1;
 }
 
+/* ── 顶栏 — 对齐参考图顶栏风格 ── */
 .top-bar {
-  width: min(960px, 100%);
+  width: min(980px, 100%);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.35rem 0.25rem;
+  padding: 0.45rem 0.85rem;
   flex-wrap: wrap;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(42, 30, 20, 0.9), rgba(22, 16, 12, 0.92));
+  border: var(--border-gold-soft);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(212, 175, 55, 0.12);
 }
 
 .top-bar-brand {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: 0.16em;
-  color: var(--text);
-  text-shadow: var(--glow-magenta);
-  font-size: 0.95rem;
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* 仿参考图左上角印章 */
+.top-bar-brand::before {
+  content: '德';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  color: var(--gold-bright);
+  background: linear-gradient(145deg, #5a3a18, #2a1a0c);
+  border: 1px solid rgba(212, 175, 55, 0.65);
+  box-shadow: inset 0 0 6px rgba(212, 175, 55, 0.2);
 }
 
 .top-bar-meta {
   font-family: var(--font-mono);
   font-size: 0.82rem;
   color: var(--gold);
-  text-shadow: var(--glow-gold);
   flex: 1;
   text-align: center;
+  letter-spacing: 0.04em;
 }
 
 .top-bar-actions {
   display: flex;
-  gap: 0.45rem;
+  gap: 0.4rem;
 }
 
 .top-bar-btn {
   appearance: none;
-  border: 1px solid rgba(45, 226, 230, 0.45);
-  border-radius: 999px;
-  padding: 0.35rem 0.85rem;
-  background: rgba(12, 10, 18, 0.65);
-  color: var(--cyan);
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 6px;
+  padding: 0.32rem 0.85rem;
+  background: rgba(18, 12, 8, 0.65);
+  color: var(--gold-bright);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
   cursor: pointer;
   transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .top-bar-btn:hover {
-  border-color: var(--magenta);
-  color: var(--text);
-  box-shadow: var(--glow-magenta);
-  transform: translateY(-1px);
+  border-color: var(--gold);
+  background: rgba(40, 28, 16, 0.85);
+  box-shadow: var(--glow-gold);
 }
 
+/* 提示条 */
 .hint-strip {
-  width: min(960px, 100%);
-  padding: 0.5rem 0.9rem;
-  border-radius: 12px;
-  border: 1px solid rgba(45, 226, 230, 0.35);
-  background: rgba(45, 226, 230, 0.08);
-  color: var(--cyan);
+  width: min(980px, 100%);
+  padding: 0.5rem 0.95rem;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(30, 22, 14, 0.85);
+  color: var(--gold-bright);
   font-family: var(--font-body);
   font-size: 0.88rem;
   text-align: center;
-  box-shadow: 0 0 16px rgba(45, 226, 230, 0.12);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.25);
 }
 
-/* ── Tutorial overlay ── */
+/* ── 教程 ── */
 .tutorial-overlay {
   position: fixed;
   inset: 0;
@@ -241,8 +225,8 @@
   inset: 0;
   background: radial-gradient(
     ellipse at 50% 42%,
-    rgba(7, 6, 11, 0.55) 0%,
-    rgba(7, 6, 11, 0.88) 100%
+    rgba(18, 12, 8, 0.55) 0%,
+    rgba(8, 6, 4, 0.9) 100%
   );
   pointer-events: none;
 }
@@ -251,7 +235,7 @@
   position: absolute;
   width: min(280px, 70vw);
   height: min(160px, 28vh);
-  border-radius: 20px;
+  border-radius: 14px;
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -262,10 +246,10 @@
   width: 100%;
   height: 100%;
   border-radius: inherit;
-  border: 2px solid rgba(45, 226, 230, 0.75);
+  border: 2px solid rgba(212, 175, 55, 0.75);
   box-shadow:
-    var(--glow-cyan),
-    inset 0 0 24px rgba(45, 226, 230, 0.12);
+    var(--glow-gold),
+    inset 0 0 20px rgba(212, 175, 55, 0.1);
   animation: pulse-ring 1.8s ease-in-out infinite;
 }
 
@@ -302,10 +286,10 @@
   z-index: 2;
   width: min(440px, 100%);
   padding: 1.35rem 1.5rem 1.25rem;
-  border-radius: 18px;
-  background: rgba(12, 10, 18, 0.94);
-  border: 1px solid rgba(255, 43, 214, 0.45);
-  box-shadow: var(--glow-magenta), 0 18px 48px rgba(0, 0, 0, 0.55);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #2a1e14 0%, #1a120e 100%);
+  border: var(--border-gold);
+  box-shadow: var(--shadow-deep), var(--glow-gold);
   text-align: center;
 }
 
@@ -321,19 +305,19 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(168, 164, 184, 0.35);
-  border: 1px solid rgba(168, 164, 184, 0.4);
+  background: rgba(154, 139, 118, 0.35);
+  border: 1px solid rgba(154, 139, 118, 0.4);
 }
 
 .tutorial-dot-active {
-  background: var(--cyan);
-  border-color: var(--cyan);
-  box-shadow: var(--glow-cyan);
+  background: var(--gold);
+  border-color: var(--gold-bright);
+  box-shadow: var(--glow-gold);
 }
 
 .tutorial-dot-done {
-  background: var(--magenta);
-  border-color: var(--magenta);
+  background: var(--gold-dim);
+  border-color: var(--gold-dim);
 }
 
 .tutorial-step-label {
@@ -347,16 +331,15 @@
   margin: 0 0 0.55rem;
   font-family: var(--font-display);
   font-size: 1.15rem;
-  letter-spacing: 0.14em;
-  color: var(--text);
-  text-shadow: var(--glow-magenta);
+  letter-spacing: 0.16em;
+  color: var(--gold-bright);
 }
 
 .tutorial-body {
   margin: 0 0 1.1rem;
   font-family: var(--font-body);
   font-size: 0.92rem;
-  line-height: 1.7;
+  line-height: 1.75;
   color: var(--smoke);
   text-align: left;
 }
@@ -374,7 +357,7 @@
   font-size: 0.85rem;
 }
 
-/* ── Settings panel ── */
+/* ── 设置面板 ── */
 .settings-overlay {
   position: fixed;
   inset: 0;
@@ -391,7 +374,7 @@
   border: 0;
   padding: 0;
   margin: 0;
-  background: rgba(7, 6, 11, 0.72);
+  background: rgba(8, 6, 4, 0.75);
   cursor: pointer;
 }
 
@@ -400,10 +383,10 @@
   z-index: 1;
   width: min(400px, 100%);
   padding: 1.25rem 1.4rem 1.4rem;
-  border-radius: 18px;
-  background: rgba(12, 10, 18, 0.96);
-  border: 1px solid rgba(45, 226, 230, 0.4);
-  box-shadow: var(--glow-cyan), 0 18px 48px rgba(0, 0, 0, 0.55);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #2a1e14 0%, #16100c 100%);
+  border: var(--border-gold);
+  box-shadow: var(--shadow-deep), var(--glow-gold);
 }
 
 .settings-header {
@@ -418,26 +401,26 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.05rem;
-  letter-spacing: 0.16em;
-  color: var(--cyan);
-  text-shadow: var(--glow-cyan);
+  letter-spacing: 0.18em;
+  color: var(--gold-bright);
 }
 
 .settings-close {
   appearance: none;
-  border: 1px solid rgba(255, 43, 214, 0.45);
-  border-radius: 999px;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 6px;
   padding: 0.3rem 0.85rem;
   background: transparent;
-  color: var(--text);
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
   cursor: pointer;
 }
 
 .settings-close:hover {
-  box-shadow: var(--glow-magenta);
+  box-shadow: var(--glow-gold);
+  border-color: var(--gold);
 }
 
 .settings-row {
@@ -446,7 +429,7 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 0.65rem 0;
-  border-top: 1px solid rgba(168, 164, 184, 0.12);
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
 }
 
 .settings-label {
@@ -459,10 +442,10 @@
   appearance: none;
   min-width: 7rem;
   padding: 0.35rem 0.7rem;
-  border-radius: 10px;
-  border: 1px solid rgba(45, 226, 230, 0.4);
-  background: rgba(7, 6, 11, 0.85);
-  color: var(--cyan);
+  border-radius: 6px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(12, 8, 6, 0.85);
+  color: var(--gold-bright);
   font-family: var(--font-body);
   font-size: 0.88rem;
   cursor: pointer;
@@ -471,11 +454,11 @@
 .settings-check {
   width: 1.15rem;
   height: 1.15rem;
-  accent-color: var(--magenta);
+  accent-color: var(--gold);
   cursor: pointer;
 }
 
-/* ── Showdown modal ── */
+/* ── 摊牌弹层 ── */
 .showdown-modal-overlay {
   position: fixed;
   inset: 0;
@@ -486,38 +469,35 @@
   padding: 1.25rem;
   background: radial-gradient(
     ellipse at 50% 45%,
-    rgba(7, 6, 11, 0.45) 0%,
-    rgba(7, 6, 11, 0.82) 100%
+    rgba(18, 12, 8, 0.4) 0%,
+    rgba(8, 6, 4, 0.85) 100%
   );
 }
 
 .showdown-modal {
   width: min(400px, 100%);
   padding: 1.35rem 1.5rem 1.4rem;
-  border-radius: 18px;
-  background: rgba(12, 10, 18, 0.96);
-  border: 1px solid rgba(245, 197, 66, 0.55);
-  box-shadow: var(--glow-gold), 0 18px 48px rgba(0, 0, 0, 0.55);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #2a1e14 0%, #16100c 100%);
+  border: var(--border-gold);
+  box-shadow: var(--shadow-deep), var(--glow-gold);
   text-align: center;
 }
 
 .showdown-modal-title {
   margin: 0 0 0.9rem;
   font-family: var(--font-display);
-  font-size: 1.1rem;
-  letter-spacing: 0.18em;
-  color: var(--gold);
-  text-shadow: var(--glow-gold);
+  font-size: 1.15rem;
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
 }
 
 .showdown-modal--victory .showdown-modal-title {
-  color: var(--cyan);
-  text-shadow: var(--glow-cyan);
+  color: var(--gold-bright);
 }
 
 .showdown-modal--loss .showdown-modal-title {
-  color: var(--magenta);
-  text-shadow: var(--glow-magenta);
+  color: var(--danger-soft);
 }
 
 .showdown-modal-subtitle {
@@ -525,7 +505,6 @@
   font-family: var(--font-body);
   font-size: 0.88rem;
   color: var(--smoke);
-  letter-spacing: 0.04em;
 }
 
 .showdown-modal-list {
@@ -544,9 +523,9 @@
   gap: 0.15rem 0.75rem;
   text-align: left;
   padding: 0.55rem 0.7rem;
-  border-radius: 12px;
-  background: rgba(245, 197, 66, 0.06);
-  border: 1px solid rgba(245, 197, 66, 0.18);
+  border-radius: 8px;
+  background: rgba(212, 175, 55, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.18);
 }
 
 .showdown-modal-best-five {
@@ -568,7 +547,7 @@
   grid-column: 1;
   font-family: var(--font-body);
   font-size: 0.82rem;
-  color: var(--cyan);
+  color: var(--gold);
 }
 
 .showdown-modal-amount {
@@ -577,9 +556,8 @@
   align-self: center;
   font-family: var(--font-mono);
   font-weight: 600;
-  color: var(--gold);
+  color: var(--gold-bright);
   font-size: 1rem;
-  text-shadow: var(--glow-gold);
 }
 
 .showdown-modal-empty {
@@ -591,22 +569,22 @@
   margin-top: 0.85rem;
 }
 
-/* ── Hand rank guide ── */
+/* ── 牌型速查 ── */
 .hand-rank-guide {
-  width: min(960px, 100%);
+  width: min(980px, 100%);
   align-self: center;
 }
 
 .hand-rank-toggle {
   appearance: none;
   width: 100%;
-  border: 1px solid rgba(255, 43, 214, 0.35);
-  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
   padding: 0.45rem 0.9rem;
-  background: rgba(12, 10, 18, 0.72);
-  color: var(--magenta);
+  background: rgba(22, 16, 12, 0.82);
+  color: var(--gold);
   font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   letter-spacing: 0.14em;
   cursor: pointer;
   text-align: left;
@@ -616,17 +594,17 @@
 }
 
 .hand-rank-toggle:hover {
-  border-color: var(--magenta);
-  box-shadow: var(--glow-magenta);
+  border-color: var(--gold);
+  box-shadow: var(--glow-gold);
 }
 
 .hand-rank-list {
   list-style: none;
   margin: 0.4rem 0 0;
   padding: 0.55rem 0.7rem;
-  border-radius: 12px;
-  border: 1px solid rgba(45, 226, 230, 0.25);
-  background: rgba(12, 10, 18, 0.88);
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  background: rgba(18, 12, 8, 0.92);
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -641,7 +619,7 @@
   align-items: baseline;
   font-size: 0.82rem;
   padding: 0.2rem 0;
-  border-bottom: 1px solid rgba(168, 164, 184, 0.08);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.08);
 }
 
 .hand-rank-item:last-child {

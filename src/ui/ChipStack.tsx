@@ -6,7 +6,7 @@ export interface ChipStackProps {
   className?: string
 }
 
-/** Compact neon chip amount label for street bets / pot fragments. */
+/** Compact gold chip amount label for street bets / pot fragments. */
 export function ChipStack({ amount, className = '' }: ChipStackProps) {
   const [fly, setFly] = useState(false)
   const prev = useRef(0)
